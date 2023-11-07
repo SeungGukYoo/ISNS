@@ -26,8 +26,8 @@
     "lint": "eslint --cache . --ext ts,tsx"
   },
   "lint-staged": {
-    "src/**/*.{tsx,ts,css}": [
-      "prettier --write --cache ."
+    "src/**/*": [
+      "prettier --write --ignore-unknown"
     ]
   },
   "eslintConfig": {
