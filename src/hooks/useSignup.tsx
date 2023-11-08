@@ -1,6 +1,12 @@
-import React, { useState } from 'react';
+import { AuthContext } from 'context/authContext';
+import { FirebaseError } from 'firebase/app';
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const useSignup = () => {
+  const navigate = useNavigate();
+  const { firebaseClient } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -41,9 +47,25 @@ const useSignup = () => {
     }
   };
 
-  const onSubmitForm = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(email, password, confirmPassword);
+  const onSubmitForm = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault();
+      if (firebaseClient) {
+        const response = await toast.promise(firebaseClient?.createEmailUser(email, password), {
+          pending: '잠시만 기다려주세요',
+          success: '환영합니다.',
+          error: '예기치 못한 에러가 발생했습니다.',
+        });
+
+        if (response) {
+          navigate('/signin');
+        }
+      }
+    } catch (error) {
+      if ((error as FirebaseError).code === 'auth/email-already-in-use') {
+        setError('해당 계정이 이미 존재합니다.');
+      }
+    }
   };
   return { email, password, confirmPassword, error, onChangeValue, onSubmitForm };
 };
