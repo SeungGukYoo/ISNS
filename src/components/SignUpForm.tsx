@@ -49,7 +49,7 @@ const SignUpForm = () => {
         <Link to="/signin">로그인하기</Link>
       </div>
       <div className="form__block">
-        <button type="submit" className="form__btn-submit">
+        <button type="submit" className="form__btn-submit" disabled={!!error}>
           회원가입
         </button>
       </div>
