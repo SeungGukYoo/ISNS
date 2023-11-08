@@ -1,7 +1,9 @@
 export interface Props {
   children: React.ReactNode;
 }
-
+export interface RouterProps {
+  isAuthenticated: boolean;
+}
 export interface PostProps {
   id: string;
   email: string;
