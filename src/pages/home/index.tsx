@@ -1,5 +1,5 @@
 import { AiFillHeart } from 'react-icons/ai';
-import { FaRegComment, FaUser } from 'react-icons/fa';
+import { FaRegComment, FaUserCircle } from 'react-icons/fa';
 import { FiImage } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import type { PostProps } from '../../..';
@@ -82,9 +82,9 @@ function HomePage() {
               <div className="post__box-profile">
                 <div className="post__flex">
                   {el.profileUrl && el.profileUrl?.length > 0 ? (
-                    <img src={el.profileUrl} />
+                    <img src={el.profileUrl} className="post__box-img" />
                   ) : (
-                    <FaUser className="post__box-avatar" />
+                    <FaUserCircle className="post__box-icon" />
                   )}
                   <div className="post__email">{el.email}</div>
                   <div className="post__createdAt">{el.createdAt}</div>
