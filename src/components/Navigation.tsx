@@ -6,19 +6,19 @@ import { useNavigate } from 'react-router-dom';
 export default function Navigation() {
   const navigate = useNavigate();
   return (
-    <footer>
-      <div className="footer__grid">
+    <nav className="navigation">
+      <div className="navigation__grid">
         <button type="button" onClick={() => navigate('/')}>
-          <BsHouse /> Home
+          <BsHouse className="navigation__icon" /> Home
         </button>
         <button type="button" onClick={() => navigate('/profile')}>
-          <BiUser /> Profile
+          <BiUser className="navigation__icon" /> Profile
         </button>
         <button type="button" onClick={() => navigate('/')}>
-          <IoIosLogOut />
+          <IoIosLogOut className="navigation__icon" />
           Logout
         </button>
       </div>
-    </footer>
+    </nav>
   );
 }
