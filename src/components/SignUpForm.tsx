@@ -41,9 +41,7 @@ const SignUpForm = () => {
           required
         />
       </div>
-      <div className="from__block">
-        <div className="form__error">{error}</div>
-      </div>
+      <div className="form__block error-msg">{error}</div>
       <div className="form__block">
         계졍이 있으신가요?
         <Link to="/signin">로그인하기</Link>

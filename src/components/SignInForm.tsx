@@ -28,7 +28,7 @@ const SignInForm = () => {
           required
         />
       </div>
-      <div className="form__block">{error}</div>
+      <div className="form__block error-msg">{error}</div>
       <div className="form__block">
         계정이 없으신가요?
         <Link to="/signup">회원가입하러 가기</Link>
