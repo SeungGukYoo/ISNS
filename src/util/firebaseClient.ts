@@ -10,10 +10,19 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
-import app from 'firebaseApp';
+import {
+  DocumentData,
+  DocumentReference,
+  QuerySnapshot,
+  collection,
+  doc,
+  getDocs,
+} from 'firebase/firestore';
+import app, { db } from 'firebaseApp';
 
 interface FirebaseClientType {
   getAuthData(): Auth;
+  getDocData(): DocumentReference<DocumentData, DocumentData>;
   createEmailUser(email: string, password: string): Promise<User>;
   loginEmail(email: string, password: string): Promise<User>;
   companyLogin(company: string): Promise<User | undefined>;
@@ -21,9 +30,16 @@ interface FirebaseClientType {
   loginGithub(): Promise<User>;
   authChanged(callback: (user: User | null) => void): void;
   logoutUser(): Promise<void>;
+  getAllPosts(): Promise<QuerySnapshot<DocumentData, DocumentData>>;
 }
 
 class FirebaseClient implements FirebaseClientType {
+  getDocData() {
+    return doc(db, 'posts');
+  }
+  getAllPosts() {
+    return getDocs(collection(db, 'posts'));
+  }
   async companyLogin(company: string): Promise<User | undefined> {
     let userInfo: User | undefined;
     if (company === 'google') userInfo = await this.loginGoogle();
