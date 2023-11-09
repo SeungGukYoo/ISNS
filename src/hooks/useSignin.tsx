@@ -39,7 +39,21 @@ const useSignin = () => {
       console.error(error);
     }
   };
-  return { email, password, error, onChangeValue, onSubmitForm };
+
+  const webLogin = async (e: React.MouseEvent<unknown, MouseEvent>) => {
+    const { name } = e.target as HTMLButtonElement;
+    try {
+      if (firebaseClient) {
+        await toast.promise(firebaseClient?.companyLogin(name), {
+          success: '로그인이 완료되었습니다.',
+          error: '예기치 못한 에러가 발생하였습니다.',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  return { email, password, error, onChangeValue, onSubmitForm, webLogin };
 };
 
 export default useSignin;
