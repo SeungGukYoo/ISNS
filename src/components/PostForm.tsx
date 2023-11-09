@@ -1,17 +1,20 @@
-import React from 'react';
+import useForm from 'hooks/useForm';
 import { FiImage } from 'react-icons/fi';
 
 const PostForm = () => {
+  const { content, onChangeValue, onSubmitForm } = useForm();
   const handleFileUpload = () => {
     console.log('event');
   };
   return (
-    <form action="" className="post__form">
+    <form onSubmit={onSubmitForm} className="post__form">
       <textarea
         name="content"
         id="content"
         className="post__form-textarea"
         placeholder="What is Happening"
+        value={content}
+        onChange={onChangeValue}
         required
       />
       <div className="post__form-submit-area">
