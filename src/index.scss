@@ -72,6 +72,7 @@ a {
       align-items: center;
       justify-content: center;
       background-color: transparent;
+      cursor: pointer;
       & .navigation__icon {
         background-color: transparent;
       }
@@ -238,6 +239,11 @@ a {
     &.error-msg {
       color: $dangerColor;
     }
+    .form__company-btn {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-column-gap: 10px;
+    }
   }
 
   &__block-lg {
@@ -271,6 +277,22 @@ a {
     &:hover,
     &:focus {
       background-color: $activeColor;
+    }
+    &.google-btn {
+      background-color: $white;
+      color: $dangerColor;
+      &:hover,
+      &:focus {
+        background-color: #e5e5e5;
+      }
+    }
+    &.github-btn {
+      background-color: black;
+      color: $white;
+      &:hover,
+      &:focus {
+        background-color: rgb(32, 32, 32);
+      }
     }
   }
 }
