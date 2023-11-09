@@ -11,7 +11,7 @@ root.render(
   <Router>
     <AuthContextProvider>
       <App />
-      <ToastContainer />
+      <ToastContainer autoClose={1000} hideProgressBar newestOnTop theme="dark" />
     </AuthContextProvider>
   </Router>,
 );
