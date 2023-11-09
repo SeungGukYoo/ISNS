@@ -6,7 +6,7 @@ export interface RouterProps {
 }
 export interface PostProps {
   id: string;
-  email: string;
+  email?: string;
   content: string;
   createdAt: string;
   uid: string;
