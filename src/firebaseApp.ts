@@ -1,5 +1,5 @@
 import { FirebaseApp, getApp, initializeApp } from 'firebase/app';
-
+import { getFirestore } from 'firebase/firestore';
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -14,4 +14,6 @@ try {
 } catch (e) {
   app = initializeApp(firebaseConfig, 'app');
 }
+export const db = getFirestore(app);
+
 export default app;
