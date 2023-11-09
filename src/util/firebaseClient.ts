@@ -20,7 +20,6 @@ import {
   getDocs,
 } from 'firebase/firestore';
 import app, { db } from 'firebaseApp';
-import { PostProps } from '../..';
 
 interface FirebaseClientType {
   getAuthData(): Auth;
@@ -33,11 +32,11 @@ interface FirebaseClientType {
   authChanged(callback: (user: User | null) => void): void;
   logoutUser(): Promise<void>;
   getAllPosts(): Promise<QuerySnapshot<DocumentData, DocumentData>>;
-  addPost(data: PostProps): Promise<DocumentReference<DocumentData, DocumentData>>;
+  addPost(data: unknown): Promise<unknown>;
 }
 
 class FirebaseClient implements FirebaseClientType {
-  addPost(data: PostProps): Promise<DocumentReference<DocumentData, DocumentData>> {
+  addPost(data: unknown): Promise<unknown> {
     return addDoc(collection(db, 'posts'), data);
   }
   getDocData() {
