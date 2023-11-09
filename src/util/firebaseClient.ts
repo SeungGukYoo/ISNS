@@ -5,6 +5,7 @@ import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
 import app from 'firebaseApp';
 
@@ -13,9 +14,14 @@ interface FirebaseClientType {
   createEmailUser(email: string, password: string): Promise<User>;
   loginEmail(email: string, password: string): Promise<User>;
   authChanged(callback: (user: User | null) => void): void;
+  logoutUser(): Promise<void>;
 }
 
 class FirebaseClient implements FirebaseClientType {
+  logoutUser() {
+    const auth = this.getAuthData();
+    return signOut(auth);
+  }
   authChanged(callback: (user: User | null) => void) {
     const auth = this.getAuthData();
     onAuthStateChanged(auth, user => {
@@ -34,6 +40,7 @@ class FirebaseClient implements FirebaseClientType {
       return user;
     });
   }
+
   createEmailUser(email: string, password: string) {
     const auth = this.getAuthData();
 
