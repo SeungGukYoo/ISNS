@@ -11,15 +11,15 @@ import {
   signOut,
 } from 'firebase/auth';
 import {
-  CollectionReference,
   DocumentData,
   DocumentReference,
+  DocumentSnapshot,
   QuerySnapshot,
   addDoc,
   collection,
   deleteDoc,
-  deleteField,
   doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -30,20 +30,30 @@ import { PostProps } from '../..';
 
 interface FirebaseClientType {
   getAuthData(): Auth;
-  getDocData(): DocumentReference<DocumentData, DocumentData>;
+  authChanged(callback: (user: User | null) => void): void;
   createEmailUser(email: string, password: string): Promise<User>;
   loginEmail(email: string, password: string): Promise<User>;
   companyLogin(company: string): Promise<User | undefined>;
   loginGoogle(): Promise<User>;
   loginGithub(): Promise<User>;
-  authChanged(callback: (user: User | null) => void): void;
   logoutUser(): Promise<void>;
+  getDocData(): DocumentReference<DocumentData, DocumentData>;
   getSortedPosts(): Promise<QuerySnapshot<DocumentData, DocumentData>>;
+  getPost(pstId: string): Promise<DocumentSnapshot<DocumentData, DocumentData>>;
   addPost(data: Omit<PostProps, 'id'>): Promise<DocumentReference<DocumentData, DocumentData>>;
+  updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown>;
   deletePost(postId: string): Promise<void>;
 }
 
 class FirebaseClient implements FirebaseClientType {
+  updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown> {
+    const docRef = doc(db, 'posts', postId);
+    return updateDoc(docRef, { ...postData });
+  }
+  getPost(postId: string) {
+    const docRef = doc(db, 'posts', postId);
+    return getDoc(docRef);
+  }
   deletePost(postId: string) {
     const docRef = doc(db, 'posts', postId);
     return deleteDoc(docRef);
