@@ -1,12 +1,12 @@
-import { AuthContext } from 'context/authContext';
 import { FirebaseError } from 'firebase/app';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useAuthContext } from './useContextUtil';
 
 const useSignup = () => {
   const navigate = useNavigate();
-  const { firebaseClient } = useContext(AuthContext);
+  const { firebaseClient } = useAuthContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

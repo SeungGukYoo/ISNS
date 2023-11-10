@@ -1,11 +1,9 @@
 import PostBox from 'components/PostBox';
 import PostForm from 'components/PostForm';
-
-import { PostsContext } from 'context/postsContext';
-import { useContext } from 'react';
+import { usePostContext } from 'hooks/useContextUtil';
 
 function HomePage() {
-  const { posts } = useContext(PostsContext);
+  const { posts } = usePostContext();
 
   return (
     <div className="home">
@@ -17,7 +15,7 @@ function HomePage() {
       <PostForm />
       <div className="post">
         {posts.length > 0 ? (
-          posts.map(el => <PostBox post={el} key={el.id} />)
+          posts.map(post => <PostBox post={post} key={post.id} />)
         ) : (
           <div className="post__no-post">
             <div className="post__text">게시글이 없습니다.</div>

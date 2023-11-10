@@ -1,10 +1,9 @@
 import Layout from 'components/Layout';
 import Router from 'components/Router';
-import { AuthContext } from 'context/authContext';
-import { useContext } from 'react';
+import { useAuthContext } from 'hooks/useContextUtil';
 
 function App() {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuthContext();
 
   return (
     <Layout>

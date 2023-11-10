@@ -1,5 +1,4 @@
-import { AuthContext } from 'context/authContext';
-import { useContext } from 'react';
+import { useAuthContext } from 'hooks/useContextUtil';
 import { BiUser } from 'react-icons/bi';
 import { BsHouse } from 'react-icons/bs';
 import { IoIosLogIn, IoIosLogOut } from 'react-icons/io';
@@ -8,7 +7,7 @@ import { toast } from 'react-toastify';
 
 export default function Navigation() {
   const navigate = useNavigate();
-  const { user, firebaseClient } = useContext(AuthContext);
+  const { user, firebaseClient } = useAuthContext();
   const onLogout = async () => {
     try {
       if (firebaseClient) {
