@@ -140,9 +140,41 @@ a {
     padding: 0.5rem 1rem;
     background-color: $primaryColor;
   }
+  &-hashtags-area {
+    padding: 16px;
+    border-bottom: 1px solid $borderColor;
+    .post__form-hashtag-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 1px;
+    }
+    .post__form-hashtag-tag {
+      border: 1px $primaryColor solid;
+      color: $primaryColor;
+      padding: 2px 8px;
+      margin-right: 6px;
+      border-radius: 10px;
+      cursor: pointer;
+      &:focus,
+      &:hover {
+        color: $activeColor;
+        border: $activeColor 1px solid;
+      }
+    }
+    .post__form-hashtag {
+      font-family: $font;
+      padding: 8px;
+      border: none;
+      outline: none;
+      resize: none;
+      margin-top: 8px;
+      width: calc(100% - 32px);
+    }
+  }
 }
 .post {
   padding-bottom: 40px;
+
   &__no-post {
     margin-top: 40px;
     text-align: center;
