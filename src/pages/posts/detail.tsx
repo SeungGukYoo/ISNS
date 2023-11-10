@@ -1,5 +1,7 @@
+import PostDetailForm from 'components/post/PostDetailForm';
+
 function PostDetail() {
-  return <div>PostDetail</div>;
+  return <PostDetailForm />;
 }
 
 export default PostDetail;
