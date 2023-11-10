@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { PostProps } from '../..';
-import { useAuthContext, usePostContext } from './useContextUtil';
+import { useAuthContext } from './useContextUtil';
 
 const useForm = () => {
   const { user, firebaseClient } = useAuthContext();
-  const { getPosts } = usePostContext();
+
   const [content, setContent] = useState('');
   const [post, setPost] = useState<Omit<PostProps, 'id'> | null>(null);
   const { id } = useParams();
@@ -19,7 +19,7 @@ const useForm = () => {
           pending: '잠시만 기다려주세요.',
           success: {
             render() {
-              getPosts();
+              if (id) navigate('/');
               return '게시글을 삭제하였습니다.';
             },
           },
@@ -62,7 +62,6 @@ const useForm = () => {
             pending: '잠시만 기다려주세요',
             success: {
               render() {
-                getPosts();
                 navigate('/');
                 return '게시글을 수정하였습니다.';
               },
@@ -89,8 +88,6 @@ const useForm = () => {
             pending: '잠시만 기다려주세요',
             success: {
               render() {
-                getPosts();
-
                 setContent('');
                 return '게시글을 작성하였습니다.';
               },
@@ -114,7 +111,7 @@ const useForm = () => {
     isExistPost();
   }, [firebaseClient, id]);
 
-  return { user, content, onChangeValue, onSubmitForm, onDeleteData };
+  return { id, user, content, post, onChangeValue, onSubmitForm, onDeleteData };
 };
 
 export default useForm;

@@ -16,8 +16,7 @@ const AuthContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     firebaseClient.authChanged(setUser);
-    return setInit(true);
-  }, [firebaseClient, setInit, user]);
+  }, [firebaseClient, user]);
 
   return (
     <AuthContext.Provider value={{ firebaseClient, user, init }}>{children}</AuthContext.Provider>
