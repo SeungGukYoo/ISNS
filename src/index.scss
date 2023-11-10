@@ -143,6 +143,13 @@ a {
 }
 .post {
   padding-bottom: 40px;
+  &__no-post {
+    margin-top: 40px;
+    text-align: center;
+    .post__text {
+      font-size: 16px;
+    }
+  }
   &__box {
     padding: 10px 0;
     border-bottom: 1px solid $borderColor;
@@ -156,7 +163,6 @@ a {
       border-radius: 50%;
       margin-right: 10px;
     }
-
     &-footer {
       padding: 0 16px;
       margin-top: 10px;
