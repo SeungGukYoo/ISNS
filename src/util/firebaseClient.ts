@@ -14,13 +14,12 @@ import {
   DocumentData,
   DocumentReference,
   DocumentSnapshot,
-  QuerySnapshot,
   addDoc,
   collection,
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
+  onSnapshot,
   orderBy,
   query,
   updateDoc,
@@ -29,8 +28,10 @@ import app, { db } from 'firebaseApp';
 import { PostProps } from '../..';
 
 interface FirebaseClientType {
+  gitHubProvider: GithubAuthProvider;
+  googleProvider: GoogleAuthProvider;
   getAuthData(): Auth;
-  authChanged(callback: (user: User | null) => void): void;
+  authChanged(callback: React.Dispatch<React.SetStateAction<User | null>>): void;
   createEmailUser(email: string, password: string): Promise<User>;
   loginEmail(email: string, password: string): Promise<User>;
   companyLogin(company: string): Promise<User | undefined>;
@@ -38,7 +39,7 @@ interface FirebaseClientType {
   loginGithub(): Promise<User>;
   logoutUser(): Promise<void>;
   getDocData(): DocumentReference<DocumentData, DocumentData>;
-  getSortedPosts(): Promise<QuerySnapshot<DocumentData, DocumentData>>;
+  getPostsObserver(callBack: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
   getPost(pstId: string): Promise<DocumentSnapshot<DocumentData, DocumentData>>;
   addPost(data: Omit<PostProps, 'id'>): Promise<DocumentReference<DocumentData, DocumentData>>;
   updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown>;
@@ -46,6 +47,28 @@ interface FirebaseClientType {
 }
 
 class FirebaseClient implements FirebaseClientType {
+  gitHubProvider: GithubAuthProvider;
+  googleProvider: GoogleAuthProvider;
+  constructor() {
+    this.googleProvider = new GoogleAuthProvider();
+    this.gitHubProvider = new GithubAuthProvider();
+  }
+
+  getPostsObserver(callBack: React.Dispatch<React.SetStateAction<PostProps[]>>): void {
+    const docRef = collection(db, 'posts');
+    const queryData = query(docRef, orderBy('createdAt', 'desc'));
+    onSnapshot(queryData, snapShot => {
+      const postsArr: PostProps[] = [];
+      snapShot.forEach(doc =>
+        postsArr.push({
+          id: doc.id,
+          ...doc.data(),
+        } as PostProps),
+      );
+      callBack(postsArr);
+    });
+  }
+
   updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown> {
     const docRef = doc(db, 'posts', postId);
     return updateDoc(docRef, { ...postData });
@@ -58,11 +81,7 @@ class FirebaseClient implements FirebaseClientType {
     const docRef = doc(db, 'posts', postId);
     return deleteDoc(docRef);
   }
-  getSortedPosts() {
-    const docRef = collection(db, 'posts');
-    const queryData = query(docRef, orderBy('createdAt', 'desc'));
-    return getDocs(queryData);
-  }
+
   addPost(data: Omit<PostProps, 'id'>) {
     return addDoc(collection(db, 'posts'), data);
   }
@@ -79,16 +98,14 @@ class FirebaseClient implements FirebaseClientType {
   }
   loginGoogle() {
     const auth = this.getAuthData();
-    const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider).then(result => {
+    return signInWithPopup(auth, this.googleProvider).then(result => {
       const user = result.user;
       return user;
     });
   }
   loginGithub(): Promise<User> {
     const auth = this.getAuthData();
-    const provider = new GithubAuthProvider();
-    return signInWithPopup(auth, provider).then(result => {
+    return signInWithPopup(auth, this.gitHubProvider).then(result => {
       const user = result.user;
       return user;
     });
@@ -97,7 +114,7 @@ class FirebaseClient implements FirebaseClientType {
     const auth = this.getAuthData();
     return signOut(auth);
   }
-  authChanged(callback: (user: User | null) => void) {
+  authChanged(callback: React.Dispatch<React.SetStateAction<User | null>>) {
     const auth = this.getAuthData();
     onAuthStateChanged(auth, user => {
       if (user) callback(user);
