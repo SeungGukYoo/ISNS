@@ -212,6 +212,12 @@ a {
     font-weight: 500;
     padding: 18px 4px;
   }
+  &__arrow-icon {
+    font-size: 36px;
+    margin: 24px 0;
+    margin-left: 12px;
+    cursor: pointer;
+  }
 }
 
 .hidden {
