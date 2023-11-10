@@ -23,7 +23,7 @@ const PostContextProvider = ({ children }: Props) => {
   useEffect(() => {
     getPosts();
   }, [getPosts]);
-  console.log(posts);
+
   return <PostsContext.Provider value={{ posts, getPosts }}>{children}</PostsContext.Provider>;
 };
 

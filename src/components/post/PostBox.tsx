@@ -2,7 +2,7 @@ import useForm from 'hooks/useForm';
 import { AiFillHeart } from 'react-icons/ai';
 import { FaRegComment, FaUserCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import type { PostProps } from '../..';
+import type { PostProps } from '../../..';
 
 const PostBox = ({ post }: { post: PostProps }) => {
   const { user, onDeleteData } = useForm();

@@ -1,5 +1,5 @@
-import PostBox from 'components/PostBox';
-import PostForm from 'components/PostForm';
+import PostBox from 'components/post/PostBox';
+import PostForm from 'components/post/PostForm';
 import { usePostContext } from 'hooks/useContextUtil';
 
 function HomePage() {
