@@ -18,8 +18,11 @@ import {
   collection,
   doc,
   getDocs,
+  orderBy,
+  query,
 } from 'firebase/firestore';
 import app, { db } from 'firebaseApp';
+import { PostProps } from '../..';
 
 interface FirebaseClientType {
   getAuthData(): Auth;
@@ -31,19 +34,21 @@ interface FirebaseClientType {
   loginGithub(): Promise<User>;
   authChanged(callback: (user: User | null) => void): void;
   logoutUser(): Promise<void>;
-  getAllPosts(): Promise<QuerySnapshot<DocumentData, DocumentData>>;
-  addPost(data: unknown): Promise<unknown>;
+  getSortedPosts(): Promise<QuerySnapshot<DocumentData, DocumentData>>;
+  addPost(data: Omit<PostProps, 'id'>): Promise<DocumentReference<DocumentData, DocumentData>>;
 }
 
 class FirebaseClient implements FirebaseClientType {
-  addPost(data: unknown): Promise<unknown> {
+  getSortedPosts() {
+    const docRef = collection(db, 'posts');
+    const queryData = query(docRef, orderBy('createdAt', 'desc'));
+    return getDocs(queryData);
+  }
+  addPost(data: Omit<PostProps, 'id'>) {
     return addDoc(collection(db, 'posts'), data);
   }
   getDocData() {
     return doc(db, 'posts');
-  }
-  getAllPosts() {
-    return getDocs(collection(db, 'posts'));
   }
   async companyLogin(company: string): Promise<User | undefined> {
     let userInfo: User | undefined;

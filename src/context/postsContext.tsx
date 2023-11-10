@@ -13,8 +13,9 @@ const PostContextProvider = ({ children }: Props) => {
   const getPosts = useCallback(async () => {
     if (!user) return;
     const postsArr: PostProps[] = [];
-    const querySnapShot = await firebaseClient?.getAllPosts();
-    querySnapShot?.forEach(doc => {
+    const sortedQuerySnapShot = await firebaseClient?.getSortedPosts();
+
+    sortedQuerySnapShot?.forEach(doc => {
       postsArr.push({ id: doc.id, ...doc.data() } as PostProps);
     });
     setPosts(postsArr);
@@ -22,6 +23,7 @@ const PostContextProvider = ({ children }: Props) => {
   useEffect(() => {
     getPosts();
   }, [getPosts]);
+  console.log(posts);
   return <PostsContext.Provider value={{ posts, getPosts }}>{children}</PostsContext.Provider>;
 };
 
