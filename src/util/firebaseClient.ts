@@ -11,15 +11,19 @@ import {
   signOut,
 } from 'firebase/auth';
 import {
+  CollectionReference,
   DocumentData,
   DocumentReference,
   QuerySnapshot,
   addDoc,
   collection,
+  deleteDoc,
+  deleteField,
   doc,
   getDocs,
   orderBy,
   query,
+  updateDoc,
 } from 'firebase/firestore';
 import app, { db } from 'firebaseApp';
 import { PostProps } from '../..';
@@ -36,9 +40,14 @@ interface FirebaseClientType {
   logoutUser(): Promise<void>;
   getSortedPosts(): Promise<QuerySnapshot<DocumentData, DocumentData>>;
   addPost(data: Omit<PostProps, 'id'>): Promise<DocumentReference<DocumentData, DocumentData>>;
+  deletePost(postId: string): Promise<void>;
 }
 
 class FirebaseClient implements FirebaseClientType {
+  deletePost(postId: string) {
+    const docRef = doc(db, 'posts', postId);
+    return deleteDoc(docRef);
+  }
   getSortedPosts() {
     const docRef = collection(db, 'posts');
     const queryData = query(docRef, orderBy('createdAt', 'desc'));
