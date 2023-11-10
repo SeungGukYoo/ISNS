@@ -9,6 +9,25 @@ const useForm = () => {
   const { getPosts } = usePostContext();
   const [content, setContent] = useState('');
 
+  const onDeleteData = async (postId: string) => {
+    if (confirm('게시글을 삭제하시겠습니까?')) {
+      try {
+        await toast.promise(firebaseClient?.deletePost(postId) as Promise<void>, {
+          pending: '잠시만 기다려주세요.',
+          success: {
+            render() {
+              getPosts();
+              return '게시글을 삭제하였습니다.';
+            },
+          },
+          error: '예기치 못한 에러가 발생하였습니다.',
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   const onChangeValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { value, name } = e.target;
     if (name === 'content') {
@@ -49,7 +68,7 @@ const useForm = () => {
       console.error(error);
     }
   };
-  return { content, onChangeValue, onSubmitForm };
+  return { user, content, onChangeValue, onSubmitForm, onDeleteData };
 };
 
 export default useForm;

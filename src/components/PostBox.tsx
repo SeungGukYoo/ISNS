@@ -1,13 +1,12 @@
-import React from 'react';
+import useForm from 'hooks/useForm';
 import { AiFillHeart } from 'react-icons/ai';
 import { FaRegComment, FaUserCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import type { PostProps } from '../..';
 
 const PostBox = ({ post }: { post: PostProps }) => {
-  const handleDelete = () => {
-    console.log('event');
-  };
+  const { user, onDeleteData } = useForm();
+
   return (
     <div className="post__box" key={post.id}>
       <Link to={`/posts/${post.id}`}>
@@ -25,15 +24,17 @@ const PostBox = ({ post }: { post: PostProps }) => {
         </div>
       </Link>
       <div className="post__box-footer">
-        {/* post.uid===user.uid */}
-        <>
-          <button type="button" className="post__delete" onClick={handleDelete}>
-            Delete
-          </button>
-          <button type="button" className="post__edit">
-            <Link to={`/posts/edit/${post.id}`}>Edit</Link>
-          </button>
-        </>
+        {post.uid === user?.uid && (
+          <>
+            <button type="button" className="post__delete" onClick={() => onDeleteData(post.id)}>
+              Delete
+            </button>
+            <button type="button" className="post__edit">
+              <Link to={`/posts/edit/${post.id}`}>Edit</Link>
+            </button>
+          </>
+        )}
+
         <button type="button" className="post__likes">
           <AiFillHeart />
           {post?.likeCount || 0}
