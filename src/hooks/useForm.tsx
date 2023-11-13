@@ -53,7 +53,7 @@ const useForm = () => {
       setContent(value);
     }
     if (name === 'hashtag') {
-      setHashtag(value);
+      setHashtag(value.trim());
     }
   };
   const onSubmitForm = async (e: React.FormEvent) => {
