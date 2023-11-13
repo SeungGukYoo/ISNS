@@ -23,6 +23,7 @@ import {
   orderBy,
   query,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import app, { db } from 'firebaseApp';
 import { PostProps } from '../..';
@@ -44,6 +45,7 @@ interface FirebaseClientType {
   addPost(data: Omit<PostProps, 'id'>): Promise<DocumentReference<DocumentData, DocumentData>>;
   updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown>;
   deletePost(postId: string): Promise<void>;
+  searchPost(hashtag: string, callback: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
 }
 
 class FirebaseClient implements FirebaseClientType {
@@ -52,6 +54,21 @@ class FirebaseClient implements FirebaseClientType {
   constructor() {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
+  }
+  searchPost(hashtag: string, callBack: React.Dispatch<React.SetStateAction<PostProps[]>>): void {
+    const postsRef = collection(db, 'posts');
+
+    const searchQuery = query(
+      postsRef,
+      where('hashtags', 'array-contains-any', [hashtag]),
+      orderBy('createdAt', 'desc'),
+    );
+
+    onSnapshot(searchQuery, snapShot => {
+      const matchPost = snapShot?.docs.map(post => ({ id: post.id, ...post.data() }) as PostProps);
+      callBack(matchPost);
+    });
+    return;
   }
 
   getPostsObserver(callBack: React.Dispatch<React.SetStateAction<PostProps[]>>): void {
