@@ -7,9 +7,11 @@ import { useAuthContext } from './useContextUtil';
 
 const useForm = () => {
   const { user, firebaseClient } = useAuthContext();
-
   const [content, setContent] = useState('');
   const [post, setPost] = useState<Omit<PostProps, 'id'> | null>(null);
+  const [hashtag, setHashtag] = useState<string>('');
+  const [hashtags, setHashtags] = useState<string[]>([]);
+
   const { id } = useParams();
   const navigate = useNavigate();
   const onDeleteData = async (postId: string) => {
@@ -31,10 +33,27 @@ const useForm = () => {
     }
   };
 
-  const onChangeValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const onHandleKeyup = (e: React.KeyboardEvent) => {
+    if (e.code === 'Space' && hashtag.length > 0) {
+      if (hashtags?.includes(hashtag)) {
+        toast.error('이미 존재하는 해시태그 입니다.');
+      } else {
+        setHashtags(prev => (prev?.length ? [...prev, hashtag] : [hashtag]));
+        setHashtag('');
+      }
+    }
+  };
+
+  const onDeleteHashtag = (hashtag: string) => {
+    setHashtags(hashtags.filter(tag => tag !== hashtag));
+  };
+  const onChangeValue = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { value, name } = e.target;
     if (name === 'content') {
       setContent(value);
+    }
+    if (name === 'hashtag') {
+      setHashtag(value);
     }
   };
   const onSubmitForm = async (e: React.FormEvent) => {
@@ -47,6 +66,7 @@ const useForm = () => {
         dataForm = {
           ...post,
           content,
+          hashtags,
           createdAt: new Date().toLocaleDateString('ko', {
             hour: '2-digit',
             minute: '2-digit',
@@ -74,6 +94,7 @@ const useForm = () => {
           content,
           email: user.email || '',
           uid: user.uid,
+          hashtags,
           createdAt: new Date().toLocaleDateString('ko', {
             hour: '2-digit',
             minute: '2-digit',
@@ -88,7 +109,6 @@ const useForm = () => {
             pending: '잠시만 기다려주세요',
             success: {
               render() {
-                setContent('');
                 return '게시글을 작성하였습니다.';
               },
             },
@@ -96,6 +116,9 @@ const useForm = () => {
           },
         );
       }
+      setContent('');
+      setHashtag('');
+      setHashtags([]);
     } catch (error) {
       console.error(error);
     }
@@ -106,12 +129,25 @@ const useForm = () => {
     const isExistPost = async () => {
       const postData = await firebaseClient?.getPost(id);
       setContent(postData?.data()?.content);
+      setHashtags(postData?.data()?.hashtags);
       setPost(postData?.data() as Omit<PostProps, 'id'>);
     };
     isExistPost();
   }, [firebaseClient, id]);
 
-  return { id, user, content, post, onChangeValue, onSubmitForm, onDeleteData };
+  return {
+    id,
+    post,
+    user,
+    content,
+    hashtag,
+    hashtags,
+    onChangeValue,
+    onSubmitForm,
+    onDeleteData,
+    onDeleteHashtag,
+    onHandleKeyup,
+  };
 };
 
 export default useForm;
