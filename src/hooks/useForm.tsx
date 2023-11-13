@@ -1,19 +1,23 @@
 import { DocumentData, DocumentReference } from 'firebase/firestore';
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
 import { PostProps } from '../..';
 import { useAuthContext } from './useContextUtil';
 
 const useForm = () => {
   const { user, firebaseClient } = useAuthContext();
+  const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [content, setContent] = useState('');
   const [post, setPost] = useState<Omit<PostProps, 'id'> | null>(null);
   const [hashtag, setHashtag] = useState<string>('');
   const [hashtags, setHashtags] = useState<string[]>([]);
-
+  const [progress, setProgress] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
+  const key = `${user?.uid}/ /${uuidv4()}`;
   const onDeleteData = async (postId: string) => {
     if (confirm('게시글을 삭제하시겠습니까?')) {
       try {
@@ -47,6 +51,7 @@ const useForm = () => {
   const onDeleteHashtag = (hashtag: string) => {
     setHashtags(hashtags.filter(tag => tag !== hashtag));
   };
+  const onDeleteImg = () => setImgUrl('');
   const onChangeValue = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { value, name } = e.target;
     if (name === 'content') {
@@ -55,12 +60,36 @@ const useForm = () => {
     if (name === 'hashtag') {
       setHashtag(value.trim());
     }
+    if (name === 'file-input') {
+      const { files } = e.target as HTMLInputElement;
+      if (files) {
+        const file = files?.[0];
+
+        const fileReader = new FileReader();
+
+        fileReader?.readAsDataURL(file);
+        fileReader.onloadend = (fileEvent: ProgressEvent<FileReader>) => {
+          const { result } = fileEvent.currentTarget as FileReader;
+          setImgUrl(result as string);
+        };
+      }
+    }
   };
+
   const onSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-
+    if (progress) return;
     try {
+      let uploadUrl = '';
+      console.log(imgUrl);
+
+      if (imgUrl) {
+        setProgress(true);
+        const snapShot = await firebaseClient?.uploadImage(key, imgUrl);
+        uploadUrl = (await firebaseClient?.downloadImge(snapShot)) as string;
+      }
+
       let dataForm: Omit<PostProps, 'id'>;
       if (id && post) {
         dataForm = {
@@ -95,6 +124,7 @@ const useForm = () => {
           email: user.email || '',
           uid: user.uid,
           hashtags,
+          imageUrl: uploadUrl,
           createdAt: new Date().toLocaleDateString('ko', {
             hour: '2-digit',
             minute: '2-digit',
@@ -109,6 +139,7 @@ const useForm = () => {
             pending: '잠시만 기다려주세요',
             success: {
               render() {
+                setProgress(false);
                 return '게시글을 작성하였습니다.';
               },
             },
@@ -119,6 +150,7 @@ const useForm = () => {
       setContent('');
       setHashtag('');
       setHashtags([]);
+      setImgUrl('');
     } catch (error) {
       console.error(error);
     }
@@ -142,6 +174,9 @@ const useForm = () => {
     content,
     hashtag,
     hashtags,
+    imgUrl,
+    progress,
+    onDeleteImg,
     onChangeValue,
     onSubmitForm,
     onDeleteData,

@@ -6,7 +6,10 @@ const PostForm = () => {
     content,
     hashtag,
     hashtags,
+    imgUrl,
+    progress,
     onChangeValue,
+    onDeleteImg,
     onSubmitForm,
     onDeleteHashtag,
     onHandleKeyup,
@@ -48,11 +51,33 @@ const PostForm = () => {
         />
       </div>
       <div className="post__form-submit-area">
-        <label htmlFor="file-input" className="post__form-file">
-          <FiImage className="post__form-file-icon" />
-        </label>
-        <input className="hidden" type="file" name="file-input" accept="image/*" />
-        <input type="submit" value="Tweet" className="post__form-submit-btn" />
+        {imgUrl && (
+          <div className="post__form-img-container">
+            <img src={imgUrl} alt="image" />
+            <button type="button" onClick={onDeleteImg} className="post__form-delete-img">
+              X
+            </button>
+          </div>
+        )}
+        <div className="post__form-image-area">
+          <label htmlFor="file-input" className="post__form-file">
+            <FiImage className="post__form-file-icon" />
+          </label>
+          <input
+            className="hidden"
+            type="file"
+            id="file-input"
+            name="file-input"
+            accept="image/*"
+            onChange={onChangeValue}
+          />
+          <input
+            type="submit"
+            value={progress ? 'Wating' : 'Tweet'}
+            className="post__form-submit-btn"
+            disabled={progress}
+          />
+        </div>
       </div>
     </form>
   );
