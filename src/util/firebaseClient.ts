@@ -25,12 +25,15 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { UploadResult, getDownloadURL, ref, uploadString } from 'firebase/storage';
 import app, { db } from 'firebaseApp';
 import { PostProps } from '../..';
+import { storage } from './../firebaseApp';
 
 interface FirebaseClientType {
   gitHubProvider: GithubAuthProvider;
   googleProvider: GoogleAuthProvider;
+  // authenticate
   getAuthData(): Auth;
   authChanged(callback: React.Dispatch<React.SetStateAction<User | null>>): void;
   createEmailUser(email: string, password: string): Promise<User>;
@@ -39,6 +42,8 @@ interface FirebaseClientType {
   loginGoogle(): Promise<User>;
   loginGithub(): Promise<User>;
   logoutUser(): Promise<void>;
+
+  // store
   getDocData(): DocumentReference<DocumentData, DocumentData>;
   getPostsObserver(callBack: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
   getPost(pstId: string): Promise<DocumentSnapshot<DocumentData, DocumentData>>;
@@ -46,6 +51,10 @@ interface FirebaseClientType {
   updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown>;
   deletePost(postId: string): Promise<void>;
   searchPost(hashtag: string, callback: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
+
+  // storage
+  uploadImage(uuid: string, result: string): Promise<UploadResult>;
+  downloadImge(snapshot: UploadResult): Promise<string>;
 }
 
 class FirebaseClient implements FirebaseClientType {
@@ -54,6 +63,14 @@ class FirebaseClient implements FirebaseClientType {
   constructor() {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
+  }
+  downloadImge(snapshot: UploadResult | undefined): Promise<string> {
+    if (!snapshot) throw new Error('이미지 업로드가 실패했습니다.');
+    return getDownloadURL(snapshot?.ref);
+  }
+  uploadImage(uuid: string, imgString: string) {
+    const mounainsRef = ref(storage, uuid);
+    return uploadString(mounainsRef, imgString, 'data_url');
   }
   searchPost(hashtag: string, callBack: React.Dispatch<React.SetStateAction<PostProps[]>>): void {
     const postsRef = collection(db, 'posts');
