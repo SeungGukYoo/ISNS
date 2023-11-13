@@ -106,6 +106,20 @@ a {
       background-color: $darkActive;
     }
   }
+  &__search-div {
+    padding: 14px;
+  }
+  &__search {
+    border: none;
+    outline: none;
+    font-size: 18px;
+    width: 100%;
+    padding: 7px 0;
+    border-bottom: 1px solid $gray;
+    &::placeholder {
+      color: $gray;
+    }
+  }
 }
 
 .post__form {
