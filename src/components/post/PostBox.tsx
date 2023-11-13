@@ -20,6 +20,12 @@ const PostBox = ({ post }: { post: PostProps }) => {
             <div className="post__email">{post.email}</div>
             <div className="post__createdAt">{post.createdAt}</div>
           </div>
+          {post?.imageUrl && (
+            <div className="post__image">
+              <img src={post.imageUrl} alt="image" />
+            </div>
+          )}
+
           <div className="post__content">{post.content}</div>
           <div className="post__form-hashtag-tags">
             {post?.hashtags.map((hashtag, idx) => (
