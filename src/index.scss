@@ -60,7 +60,7 @@ a {
   &__grid {
     display: grid;
     background-color: transparent;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 
     button {
       border: none;
@@ -155,6 +155,7 @@ a {
     padding: 2px 8px;
     margin-right: 6px;
     border-radius: 10px;
+    z-index: 200;
     cursor: pointer;
     &:focus,
     &:hover {

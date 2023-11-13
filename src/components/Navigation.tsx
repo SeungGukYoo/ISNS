@@ -1,4 +1,5 @@
 import { useAuthContext } from 'hooks/useContextUtil';
+import { AiOutlineSearch } from 'react-icons/ai';
 import { BiUser } from 'react-icons/bi';
 import { BsHouse } from 'react-icons/bs';
 import { IoIosLogIn, IoIosLogOut } from 'react-icons/io';
@@ -30,6 +31,10 @@ export default function Navigation() {
         <button type="button" onClick={() => navigate('/profile')}>
           <BiUser className="navigation__icon" /> Profile
         </button>
+        <button type="button" onClick={() => navigate('/search')}>
+          <AiOutlineSearch className="navigation__icon" /> Search
+        </button>
+
         {user ? (
           <button type="button" onClick={onLogout}>
             <IoIosLogOut className="navigation__icon" />
