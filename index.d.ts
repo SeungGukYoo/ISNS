@@ -10,6 +10,7 @@ export interface PostProps {
   content: string;
   createdAt: string;
   uid: string;
+  imageUrl: string;
   profileUrl?: string;
   likes?: string[];
   likeCount?: number;
