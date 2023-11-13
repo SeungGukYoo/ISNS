@@ -2,7 +2,15 @@ import useForm from 'hooks/useForm';
 import { FiImage } from 'react-icons/fi';
 
 const PostForm = () => {
-  const { content, onChangeValue, onSubmitForm } = useForm();
+  const {
+    content,
+    hashtag,
+    hashtags,
+    onChangeValue,
+    onSubmitForm,
+    onDeleteHashtag,
+    onHandleKeyup,
+  } = useForm();
 
   return (
     <form onSubmit={onSubmitForm} className="post__form">
@@ -17,16 +25,27 @@ const PostForm = () => {
       />
       <div className="post__form-hashtags-area">
         <div className="post__form-hashtag-tags">
-          {Array.from({ length: 5 }).map((el, idx) => {
-            console.log(idx);
+          {hashtags.map((el, idx) => {
             return (
-              <span className="post__form-hashtag-tag" key={idx}>
-                #hashtag
+              <span
+                className="post__form-hashtag-tag"
+                key={idx}
+                onClick={() => onDeleteHashtag(el)}
+              >
+                #{el}
               </span>
             );
           })}
         </div>
-        <input type="text" name="hashtag" className="post__form-hashtag" placeholder="#OOTD" />
+        <input
+          type="text"
+          name="hashtag"
+          className="post__form-hashtag"
+          placeholder="#OOTD"
+          value={hashtag}
+          onKeyUp={onHandleKeyup}
+          onChange={onChangeValue}
+        />
       </div>
       <div className="post__form-submit-area">
         <label htmlFor="file-input" className="post__form-file">

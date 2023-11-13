@@ -21,6 +21,13 @@ const PostBox = ({ post }: { post: PostProps }) => {
             <div className="post__createdAt">{post.createdAt}</div>
           </div>
           <div className="post__content">{post.content}</div>
+          <div className="post__form-hashtag-tags">
+            {post?.hashtags.map((hashtag, idx) => (
+              <span className="post__form-hashtag-tag" key={idx}>
+                #{hashtag}
+              </span>
+            ))}
+          </div>
         </div>
       </Link>
       <div className="post__box-footer">

@@ -5,7 +5,7 @@ import { FaRegComment, FaUserCircle } from 'react-icons/fa';
 import { MdOutlineNavigateBefore } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 const PostDetailForm = () => {
-  const { post, id, user, onDeleteData } = useForm();
+  const { post, id, user, hashtags, onDeleteData, onDeleteHashtag } = useForm();
 
   return (
     <div className="post__box" key={id}>
@@ -22,6 +22,19 @@ const PostDetailForm = () => {
             <div className="post__createdAt">{post?.createdAt}</div>
           </div>
           <div className="post__content">{post?.content}</div>
+          <div className="post__form-hashtag-tags">
+            {hashtags.map((el, idx) => {
+              return (
+                <span
+                  className="post__form-hashtag-tag"
+                  key={idx}
+                  onClick={() => onDeleteHashtag(el)}
+                >
+                  #{el}
+                </span>
+              );
+            })}
+          </div>
         </div>
       </div>
       <div className="post__box-footer">
