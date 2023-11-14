@@ -11,17 +11,21 @@ const useForm = () => {
   const { user, firebaseClient } = useAuthContext();
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [content, setContent] = useState('');
-  const [post, setPost] = useState<Omit<PostProps, 'id'> | null>(null);
+  const [post, setPost] = useState<PostProps | null>(null);
   const [hashtag, setHashtag] = useState<string>('');
   const [hashtags, setHashtags] = useState<string[]>([]);
   const [progress, setProgress] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const key = `${user?.uid}/ /${uuidv4()}`;
-  const onDeleteData = async (postId: string) => {
+  const key = `${user?.uid}/${uuidv4()}`;
+
+  const onDeleteData = async (post: PostProps) => {
     if (confirm('게시글을 삭제하시겠습니까?')) {
       try {
-        await toast.promise(firebaseClient?.deletePost(postId) as Promise<void>, {
+        if (post?.imageUrl) {
+          await firebaseClient?.deleteImage(post?.imageUrl);
+        }
+        await toast.promise(firebaseClient?.deletePost(post?.id) as Promise<void>, {
           pending: '잠시만 기다려주세요.',
           success: {
             render() {
@@ -82,7 +86,6 @@ const useForm = () => {
     if (progress) return;
     try {
       let uploadUrl = '';
-      console.log(imgUrl);
 
       if (imgUrl) {
         setProgress(true);
@@ -140,6 +143,10 @@ const useForm = () => {
             success: {
               render() {
                 setProgress(false);
+                setContent('');
+                setHashtag('');
+                setHashtags([]);
+                setImgUrl('');
                 return '게시글을 작성하였습니다.';
               },
             },
@@ -147,10 +154,6 @@ const useForm = () => {
           },
         );
       }
-      setContent('');
-      setHashtag('');
-      setHashtags([]);
-      setImgUrl('');
     } catch (error) {
       console.error(error);
     }
@@ -162,7 +165,7 @@ const useForm = () => {
       const postData = await firebaseClient?.getPost(id);
       setContent(postData?.data()?.content);
       setHashtags(postData?.data()?.hashtags);
-      setPost(postData?.data() as Omit<PostProps, 'id'>);
+      setPost({ ...postData?.data(), id } as PostProps);
     };
     isExistPost();
   }, [firebaseClient, id]);
