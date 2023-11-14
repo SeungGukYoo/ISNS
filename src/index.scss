@@ -36,8 +36,20 @@ a {
   position: relative;
   border-left: 1px solid $borderColor;
   border-right: 1px solid $borderColor;
+  .global__title {
+    margin: 0;
+    padding: 16px;
+    font-weight: 700;
+    font-size: 20px;
+  }
 }
 
+.arrow-icon {
+  font-size: 36px;
+  margin: 24px 0;
+  margin-left: 12px;
+  cursor: pointer;
+}
 .button {
   padding: 0.2rem 0.8rem;
   border-radius: 999px;
@@ -289,12 +301,7 @@ a {
     font-weight: 500;
     padding: 18px 4px;
   }
-  &__arrow-icon {
-    font-size: 36px;
-    margin: 24px 0;
-    margin-left: 12px;
-    cursor: pointer;
-  }
+
   &__image {
     margin-top: 20px;
     max-width: 80%;

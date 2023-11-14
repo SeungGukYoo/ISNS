@@ -2,7 +2,7 @@ import useForm from 'hooks/useForm';
 
 import { AiFillHeart } from 'react-icons/ai';
 import { FaRegComment, FaUserCircle } from 'react-icons/fa';
-import { MdOutlineNavigateBefore } from 'react-icons/md';
+
 import { Link } from 'react-router-dom';
 const PostDetailForm = () => {
   const { post, id, user, hashtags, onDeleteData, onDeleteHashtag } = useForm();
@@ -10,7 +10,6 @@ const PostDetailForm = () => {
   return (
     <div className="post__box" key={id}>
       <div>
-        <MdOutlineNavigateBefore className="post__arrow-icon" />
         <div className="post__box-profile">
           <div className="post__flex">
             {post?.profileUrl && post.profileUrl?.length > 0 ? (
