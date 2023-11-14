@@ -12,6 +12,7 @@ $primaryColor: #60a5fa;
 $dangerColor: #dc2626;
 $dangerActiveColor: #b01e1e;
 .profile {
+  position: relative;
 }
 .profile__container {
   display: flex;
@@ -23,8 +24,12 @@ $dangerActiveColor: #b01e1e;
 }
 
 .profile__img {
+  text-align: center;
   img {
     border-radius: 50%;
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
   }
   .default__image {
     border-radius: 50%;
@@ -32,10 +37,43 @@ $dangerActiveColor: #b01e1e;
     height: 96px;
   }
 }
+.upload__btn {
+  font-size: 14px;
+  display: block;
+  border: 1px solid $borderColor;
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+  color: $textColor;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    color: $gray;
+  }
+}
+
+.updateBtn {
+  font-size: 18px;
+  border: 1px solid $primaryColor;
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+  color: $primaryColor;
+  cursor: pointer;
+  position: absolute;
+  top: -20px;
+  right: 20px;
+  &:hover,
+  &:focus {
+    border-color: $activeColor;
+    color: $activeColor;
+  }
+}
 .profile__info {
   font-family: $font;
   p {
-    color: $gray;
+    color: $textColor;
   }
   .email {
     font-size: 18px;
@@ -48,6 +86,6 @@ $dangerActiveColor: #b01e1e;
   display: flex;
   gap: 30px;
   p {
-    color: $gray;
+    color: $textColor;
   }
 }
