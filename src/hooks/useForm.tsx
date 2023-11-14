@@ -95,10 +95,14 @@ const useForm = () => {
 
       let dataForm: Omit<PostProps, 'id'>;
       if (id && post) {
+        if (post.imageUrl) {
+          await firebaseClient?.deleteImage(post?.imageUrl);
+        }
         dataForm = {
           ...post,
           content,
           hashtags,
+          imageUrl: uploadUrl,
           createdAt: new Date().toLocaleDateString('ko', {
             hour: '2-digit',
             minute: '2-digit',
@@ -165,6 +169,7 @@ const useForm = () => {
       const postData = await firebaseClient?.getPost(id);
       setContent(postData?.data()?.content);
       setHashtags(postData?.data()?.hashtags);
+      setImgUrl(postData?.data()?.imageUrl);
       setPost({ ...postData?.data(), id } as PostProps);
     };
     isExistPost();
