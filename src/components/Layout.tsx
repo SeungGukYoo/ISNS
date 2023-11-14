@@ -22,7 +22,7 @@ const Layout = ({ children }: Props) => {
         )}
       </h1>
 
-      {children}
+      <div className="global__children">{children}</div>
       <Navigation />
     </div>
   );
