@@ -14,11 +14,13 @@ import {
   DocumentData,
   DocumentReference,
   DocumentSnapshot,
+  QuerySnapshot,
   addDoc,
   collection,
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
@@ -51,7 +53,7 @@ interface FirebaseClientType {
   updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown>;
   deletePost(postId: string): Promise<void>;
   searchPost(hashtag: string, callback: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
-
+  getPersonalPost(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
   // storage
   uploadImage(uuid: string, result: string): Promise<UploadResult>;
   downloadImge(snapshot: UploadResult): Promise<string>;
@@ -64,6 +66,11 @@ class FirebaseClient implements FirebaseClientType {
   constructor() {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
+  }
+  getPersonalPost(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>> {
+    const postsRef = collection(db, 'posts');
+    const q = query(postsRef, where('uid', '==', uid), orderBy('createdAt', 'desc'));
+    return getDocs(q);
   }
   deleteImage(imgUrl: string): Promise<void> {
     const postImgRef = ref(storage, imgUrl);
