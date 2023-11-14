@@ -39,7 +39,7 @@ const PostBox = ({ post }: { post: PostProps }) => {
       <div className="post__box-footer">
         {post.uid === user?.uid && (
           <>
-            <button type="button" className="post__delete" onClick={() => onDeleteData(post.id)}>
+            <button type="button" className="post__delete" onClick={() => onDeleteData(post)}>
               Delete
             </button>
             <button type="button" className="post__edit">

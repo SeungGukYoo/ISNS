@@ -21,6 +21,11 @@ const PostDetailForm = () => {
             <div className="post__email">{post?.email}</div>
             <div className="post__createdAt">{post?.createdAt}</div>
           </div>
+          {post?.imageUrl && (
+            <div className="post__image">
+              <img src={post.imageUrl} alt="image" />
+            </div>
+          )}
           <div className="post__content">{post?.content}</div>
           <div className="post__form-hashtag-tags">
             {hashtags.map((el, idx) => {
@@ -38,9 +43,9 @@ const PostDetailForm = () => {
         </div>
       </div>
       <div className="post__box-footer">
-        {post?.uid === user?.uid && id && (
+        {post && post?.uid === user?.uid && (
           <>
-            <button type="button" className="post__delete" onClick={() => onDeleteData(id)}>
+            <button type="button" className="post__delete" onClick={() => onDeleteData(post)}>
               Delete
             </button>
             <button type="button" className="post__edit">
