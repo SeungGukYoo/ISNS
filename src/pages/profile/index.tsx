@@ -1,5 +1,7 @@
+import ProfileBox from 'components/user/profilebox/ProfileBox';
+
 function ProfilePage() {
-  return <div>ProfilePage</div>;
+  return <ProfileBox />;
 }
 
 export default ProfilePage;
