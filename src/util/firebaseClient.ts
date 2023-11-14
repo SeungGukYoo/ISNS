@@ -25,7 +25,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { UploadResult, getDownloadURL, ref, uploadString } from 'firebase/storage';
+import { UploadResult, deleteObject, getDownloadURL, ref, uploadString } from 'firebase/storage';
 import app, { db } from 'firebaseApp';
 import { PostProps } from '../..';
 import { storage } from './../firebaseApp';
@@ -55,6 +55,7 @@ interface FirebaseClientType {
   // storage
   uploadImage(uuid: string, result: string): Promise<UploadResult>;
   downloadImge(snapshot: UploadResult): Promise<string>;
+  deleteImage(uuid: string, imgUrl: string): Promise<void>;
 }
 
 class FirebaseClient implements FirebaseClientType {
@@ -64,13 +65,18 @@ class FirebaseClient implements FirebaseClientType {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
   }
+  deleteImage(imgUrl: string): Promise<void> {
+    const postImgRef = ref(storage, imgUrl);
+    return deleteObject(postImgRef);
+  }
+
   downloadImge(snapshot: UploadResult | undefined): Promise<string> {
-    if (!snapshot) throw new Error('이미지 업로드가 실패했습니다.');
+    if (!snapshot) throw new Error('유효하지 않는 이미지');
     return getDownloadURL(snapshot?.ref);
   }
   uploadImage(uuid: string, imgString: string) {
-    const mounainsRef = ref(storage, uuid);
-    return uploadString(mounainsRef, imgString, 'data_url');
+    const postImgRef = ref(storage, uuid);
+    return uploadString(postImgRef, imgString, 'data_url');
   }
   searchPost(hashtag: string, callBack: React.Dispatch<React.SetStateAction<PostProps[]>>): void {
     const postsRef = collection(db, 'posts');
