@@ -9,6 +9,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  updateProfile,
 } from 'firebase/auth';
 import {
   DocumentData,
@@ -44,6 +45,7 @@ interface FirebaseClientType {
   loginGoogle(): Promise<User>;
   loginGithub(): Promise<User>;
   logoutUser(): Promise<void>;
+  updateProfileData(user: unknown): Promise<void>;
 
   // store
   getDocData(): DocumentReference<DocumentData, DocumentData>;
@@ -66,6 +68,13 @@ class FirebaseClient implements FirebaseClientType {
   constructor() {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
+  }
+  updateProfileData(profileInfo: string): Promise<void> {
+    const auth = getAuth(app);
+    if (!auth.currentUser) throw new Error('로그인이 필요한 접근');
+    return updateProfile(auth.currentUser, {
+      photoURL: profileInfo,
+    });
   }
   getPersonalPost(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>> {
     const postsRef = collection(db, 'posts');
