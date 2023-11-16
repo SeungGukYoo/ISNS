@@ -1,9 +1,10 @@
 import PostBox from 'components/post/PostBox';
 import useProfile from 'hooks/useProfile';
 import { FaUserCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import styles from './ProfileBox.module.scss';
 const ProfileBox = () => {
-  const { user, posts, isSave, profileUrl, updateProfile, uploadProfile } = useProfile();
+  const { user, posts, profileUrl } = useProfile();
 
   return (
     <div className={styles.profile}>
@@ -14,28 +15,17 @@ const ProfileBox = () => {
           ) : (
             <FaUserCircle className={styles.default__image} />
           )}
-          <label htmlFor="profile-file" className={styles.upload__btn}>
-            Upload Profile
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            id="profile-file"
-            name="profile-file"
-            className="hidden"
-            onChange={uploadProfile}
-          />
-          {isSave && (
-            <button onClick={updateProfile} className={styles.updateBtn}>
-              save
-            </button>
-          )}
+          <Link className={styles.upload__page_btn} to="/profile/edit">
+            Profile Edit
+          </Link>
         </div>
 
         <div>
           <div className={styles.profile__info}>
             <p className={styles.email}>Email: {user?.email}</p>
-            <p className={styles.name}>Name: {user?.displayName}</p>
+            <p className={styles.name}>
+              {user?.displayName ? `Name: ${user?.displayName}` : '이름을 작성해주세요'}
+            </p>
             <p>Post Count: {posts.length}</p>
           </div>
           <div className={styles.profile__follower}>
@@ -44,7 +34,7 @@ const ProfileBox = () => {
           </div>
         </div>
       </div>
-      {/* post */}
+
       <div className={styles.profile__posts}>
         {posts.map(post => (
           <PostBox post={post} key={post.id} />
