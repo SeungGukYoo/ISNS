@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 import { PostProps } from '../..';
 import { useAuthContext } from './useContextUtil';
 const useProfile = () => {
+  const navigate = useNavigate();
   const { user, firebaseClient } = useAuthContext();
+  const [displayName, setDisplayName] = useState(user?.displayName);
+
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [profileUrl, setProfileUrl] = useState(user?.photoURL);
   const [isSave, setIsSave] = useState(false);
@@ -21,26 +25,47 @@ const useProfile = () => {
       fileReader.onloadend = (fileEvent: ProgressEvent<FileReader>) => {
         const { result } = fileEvent.currentTarget as FileReader;
         setProfileUrl(result as string);
-        setIsSave(true);
       };
     }
   };
+  const changeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
 
-  const updateProfile = async () => {
-    if (!profileUrl) return;
+    if (name === 'display-name') {
+      setDisplayName(value.trim());
+    }
+  };
+  const deleteProfilePhoto = () => {
+    if (user?.photoURL) {
+      setProfileUrl('');
+    }
+  };
+  const updateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!displayName || displayName?.length < 1) {
+      toast.error('공백을 제외한 한글자 이상 입력하세요!');
+      return;
+    }
     try {
-      const snapShot = await firebaseClient?.uploadImage(key, profileUrl);
-      const downLoadUrl = await firebaseClient?.downloadImge(snapShot);
-      if (user?.photoURL && user?.photoURL?.length > 0) {
+      let downLoadUrl;
+
+      if (!profileUrl) downLoadUrl = '';
+      else if (profileUrl !== user?.photoURL) {
+        const snapShot = await firebaseClient?.uploadImage(key, profileUrl);
+        downLoadUrl = await firebaseClient?.downloadImge(snapShot);
+      } else downLoadUrl = profileUrl;
+
+      if (user?.photoURL) {
         await firebaseClient?.deleteImage(user?.photoURL);
       }
-      if (downLoadUrl && firebaseClient) {
-        await toast.promise(firebaseClient?.updateProfileData(downLoadUrl), {
+
+      if (firebaseClient && displayName) {
+        await toast.promise(firebaseClient?.updateProfileData(downLoadUrl as string, displayName), {
           pending: '잠시만 기다려주세요.',
           success: {
             render() {
-              setIsSave(false);
               setProfileUrl(user?.photoURL);
+              navigate(-1);
               return '안전하게 저장되었습니다.';
             },
           },
@@ -70,7 +95,17 @@ const useProfile = () => {
     getPost();
   }, [firebaseClient, user?.uid]);
 
-  return { user, posts, isSave, profileUrl, updateProfile, uploadProfile };
+  return {
+    user,
+    posts,
+
+    isSave,
+    profileUrl,
+    updateProfile,
+    uploadProfile,
+    changeValue,
+    deleteProfilePhoto,
+  };
 };
 
 export default useProfile;
