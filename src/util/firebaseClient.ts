@@ -45,7 +45,7 @@ interface FirebaseClientType {
   loginGoogle(): Promise<User>;
   loginGithub(): Promise<User>;
   logoutUser(): Promise<void>;
-  updateProfileData(user: unknown): Promise<void>;
+  updateProfileData(downloadUrl: string, displayName: string): Promise<void>;
 
   // store
   getDocData(): DocumentReference<DocumentData, DocumentData>;
@@ -69,11 +69,12 @@ class FirebaseClient implements FirebaseClientType {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
   }
-  updateProfileData(profileInfo: string): Promise<void> {
+  updateProfileData(downloadUrl: string, displayName: string): Promise<void> {
     const auth = getAuth(app);
     if (!auth.currentUser) throw new Error('로그인이 필요한 접근');
     return updateProfile(auth.currentUser, {
-      photoURL: profileInfo,
+      photoURL: downloadUrl,
+      displayName,
     });
   }
   getPersonalPost(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>> {
