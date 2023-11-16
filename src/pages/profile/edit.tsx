@@ -1,5 +1,7 @@
+import ProfileEditForm from 'components/user/profileEdit/ProfileEditForm';
+
 function ProfileEdit() {
-  return <div>ProfileEdit</div>;
+  return <ProfileEditForm />;
 }
 
 export default ProfileEdit;
