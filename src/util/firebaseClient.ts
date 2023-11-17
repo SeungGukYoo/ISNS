@@ -66,7 +66,7 @@ interface FirebaseClientType {
   likePost(postId: string, userUid: string, likesCount: number): Promise<void>;
   unLikePost(postId: string, userUid: string, likesCount: number): Promise<void>;
   addComment(commentInfo: CommentProps, postId: string): Promise<void>;
-  getComments(postId: string): Promise<unknown>;
+  deleteComment(userUid: CommentProps, postId: string): Promise<unknown>;
   // storage
   uploadImage(uuid: string, result: string): Promise<UploadResult>;
   downloadImge(snapshot: UploadResult): Promise<string>;
@@ -80,8 +80,11 @@ class FirebaseClient implements FirebaseClientType {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
   }
-  getComments(postId: string): Promise<unknown> {
-    throw new Error('Method not implemented.');
+  deleteComment(userUid: CommentProps, postId: string): Promise<unknown> {
+    const postRef = doc(db, 'posts', postId);
+    return updateDoc(postRef, {
+      comments: arrayRemove(userUid),
+    });
   }
 
   addComment(commentInfo: CommentProps, postId: string): Promise<void> {
