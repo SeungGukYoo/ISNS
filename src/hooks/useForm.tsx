@@ -1,4 +1,4 @@
-import { DocumentData, DocumentReference } from 'firebase/firestore';
+import { DocumentData, DocumentReference, arrayUnion } from 'firebase/firestore';
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -18,7 +18,6 @@ const useForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const key = `${user?.uid}/${uuidv4()}`;
-
   const onDeleteData = async (post: PostProps) => {
     if (confirm('게시글을 삭제하시겠습니까?')) {
       try {
@@ -40,7 +39,6 @@ const useForm = () => {
       }
     }
   };
-
   const onHandleKeyup = (e: React.KeyboardEvent) => {
     if (e.code === 'Space' && hashtag.length > 0) {
       if (hashtags?.includes(hashtag)) {
@@ -51,7 +49,6 @@ const useForm = () => {
       }
     }
   };
-
   const onDeleteHashtag = (hashtag: string) => {
     setHashtags(hashtags.filter(tag => tag !== hashtag));
   };
@@ -79,7 +76,6 @@ const useForm = () => {
       }
     }
   };
-
   const onSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -131,7 +127,10 @@ const useForm = () => {
           email: user.email || '',
           uid: user.uid,
           hashtags,
+          likes: [],
+          likeCount: 0,
           imageUrl: uploadUrl,
+          profileUrl: user.photoURL || '',
           createdAt: new Date().toLocaleDateString('ko', {
             hour: '2-digit',
             minute: '2-digit',
@@ -162,6 +161,20 @@ const useForm = () => {
       console.error(error);
     }
   };
+  const likeTooglePost = async (post: PostProps) => {
+    if (!user?.uid) return;
+    try {
+      const likeCount = post?.likes?.length || 0;
+      console.log(post);
+      if (post?.likes?.includes(user.uid)) {
+        await firebaseClient?.unLikePost(post.id, user?.uid, post?.likeCount - 1 || 0);
+      } else {
+        await firebaseClient?.likePost(post.id, user?.uid, likeCount + 1);
+      }
+    } catch (err) {
+      console.error;
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -184,6 +197,7 @@ const useForm = () => {
     hashtags,
     imgUrl,
     progress,
+    likeTooglePost,
     onDeleteImg,
     onChangeValue,
     onSubmitForm,

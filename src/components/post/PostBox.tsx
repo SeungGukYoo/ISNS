@@ -1,11 +1,11 @@
 import useForm from 'hooks/useForm';
-import { AiFillHeart } from 'react-icons/ai';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { FaRegComment, FaUserCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import type { PostProps } from '../../..';
 
 const PostBox = ({ post }: { post: PostProps }) => {
-  const { user, onDeleteData } = useForm();
+  const { user, onDeleteData, likeTooglePost } = useForm();
 
   return (
     <div className="post__box" key={post.id}>
@@ -48,8 +48,8 @@ const PostBox = ({ post }: { post: PostProps }) => {
           </>
         )}
 
-        <button type="button" className="post__likes">
-          <AiFillHeart />
+        <button type="button" className="post__likes" onClick={() => likeTooglePost(post)}>
+          {post?.likes?.find(userId => userId === user?.uid) ? <AiFillHeart /> : <AiOutlineHeart />}
           {post?.likeCount || 0}
         </button>
         <button type="button" className="post__comments">
