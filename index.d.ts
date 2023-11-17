@@ -4,6 +4,13 @@ export interface Props {
 export interface RouterProps {
   isAuthenticated: boolean;
 }
+export interface CommentProps {
+  uid: string;
+  createdAt: string;
+  content: string;
+  email: string;
+  profileUrl?: string;
+}
 export interface PostProps {
   id: string;
   email?: string;
@@ -14,6 +21,6 @@ export interface PostProps {
   profileUrl?: string;
   likes?: string[];
   likeCount: number;
-  comments?: string[];
+  comments?: CommentProps[];
   hashtags: string[];
 }
