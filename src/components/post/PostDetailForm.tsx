@@ -1,8 +1,7 @@
+import CommentForm from 'components/comment/commentForm/CommentForm';
 import useForm from 'hooks/useForm';
-
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { FaRegComment, FaUserCircle } from 'react-icons/fa';
-
 import { Link } from 'react-router-dom';
 const PostDetailForm = () => {
   const { post, id, user, hashtags, onDeleteData, onDeleteHashtag, likeTooglePost } = useForm();
@@ -62,6 +61,7 @@ const PostDetailForm = () => {
           {post?.comments?.length || 0}
         </button>
       </div>
+      <CommentForm />
     </div>
   );
 };
