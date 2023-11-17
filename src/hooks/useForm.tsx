@@ -1,5 +1,3 @@
-import { DocumentData, DocumentReference, arrayUnion } from 'firebase/firestore';
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -11,6 +9,7 @@ const useForm = () => {
   const { user, firebaseClient } = useAuthContext();
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [content, setContent] = useState('');
+
   const [post, setPost] = useState<PostProps | null>(null);
   const [hashtag, setHashtag] = useState<string>('');
   const [hashtags, setHashtags] = useState<string[]>([]);
@@ -39,6 +38,7 @@ const useForm = () => {
       }
     }
   };
+
   const onHandleKeyup = (e: React.KeyboardEvent) => {
     if (e.code === 'Space' && hashtag.length > 0) {
       if (hashtags?.includes(hashtag)) {
@@ -78,7 +78,7 @@ const useForm = () => {
   };
   const onSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !firebaseClient) return;
     if (progress) return;
     try {
       let uploadUrl = '';
@@ -106,21 +106,16 @@ const useForm = () => {
           }),
         };
 
-        await toast.promise(
-          firebaseClient?.updatePost(id, dataForm) as Promise<
-            DocumentReference<DocumentData, DocumentData>
-          >,
-          {
-            pending: '잠시만 기다려주세요',
-            success: {
-              render() {
-                navigate('/');
-                return '게시글을 수정하였습니다.';
-              },
+        await toast.promise(firebaseClient?.updatePost(id, dataForm), {
+          pending: '잠시만 기다려주세요',
+          success: {
+            render() {
+              navigate('/');
+              return '게시글을 수정하였습니다.';
             },
-            error: '예기치못한 에러가 발생하였습니다.',
           },
-        );
+          error: '예기치못한 에러가 발생하였습니다.',
+        });
       } else {
         dataForm = {
           content,
@@ -137,25 +132,20 @@ const useForm = () => {
             second: '2-digit',
           }),
         };
-        await toast.promise(
-          firebaseClient?.addPost(dataForm) as Promise<
-            DocumentReference<DocumentData, DocumentData>
-          >,
-          {
-            pending: '잠시만 기다려주세요',
-            success: {
-              render() {
-                setProgress(false);
-                setContent('');
-                setHashtag('');
-                setHashtags([]);
-                setImgUrl('');
-                return '게시글을 작성하였습니다.';
-              },
+        await toast.promise(firebaseClient?.addPost(dataForm), {
+          pending: '잠시만 기다려주세요',
+          success: {
+            render() {
+              setProgress(false);
+              setContent('');
+              setHashtag('');
+              setHashtags([]);
+              setImgUrl('');
+              return '게시글을 작성하였습니다.';
             },
-            error: '예기치못한 에러가 발생하였습니다.',
           },
-        );
+          error: '예기치못한 에러가 발생하였습니다.',
+        });
       }
     } catch (error) {
       console.error(error);
@@ -201,6 +191,7 @@ const useForm = () => {
     hashtags,
     imgUrl,
     progress,
+
     likeTooglePost,
     onDeleteImg,
     onChangeValue,
