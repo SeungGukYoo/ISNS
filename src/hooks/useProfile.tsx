@@ -8,10 +8,10 @@ const useProfile = () => {
   const navigate = useNavigate();
   const { user, firebaseClient } = useAuthContext();
   const [displayName, setDisplayName] = useState(user?.displayName);
-
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [profileUrl, setProfileUrl] = useState(user?.photoURL);
-  const [isSave, setIsSave] = useState(false);
+  const [tabType, setTabType] = useState<'post' | 'like'>('post');
+
   const key = `${user?.uid}/${uuidv4()}`;
   const uploadProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
@@ -77,6 +77,27 @@ const useProfile = () => {
     }
   };
 
+  const changeTabType = async (type: typeof tabType) => {
+    if (!user) return;
+    try {
+      let snapShot;
+      if (type === 'like') {
+        snapShot = await firebaseClient?.getPersonalPost(user?.uid);
+        setTabType('post');
+      } else {
+        snapShot = await firebaseClient?.getLikePosts(user?.uid);
+        setTabType('like');
+      }
+      const postsData: PostProps[] = [];
+      snapShot?.forEach(element => {
+        postsData.push({ ...element.data(), id: element.id } as PostProps);
+      });
+      setPosts(postsData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const getPost = async () => {
       try {
@@ -98,9 +119,9 @@ const useProfile = () => {
   return {
     user,
     posts,
-
-    isSave,
     profileUrl,
+    tabType,
+    changeTabType,
     updateProfile,
     uploadProfile,
     changeValue,
