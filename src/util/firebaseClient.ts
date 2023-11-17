@@ -32,7 +32,7 @@ import {
 } from 'firebase/firestore';
 import { UploadResult, deleteObject, getDownloadURL, ref, uploadString } from 'firebase/storage';
 import app, { db } from 'firebaseApp';
-import { PostProps } from '../..';
+import { CommentProps, PostProps } from '../..';
 import { storage } from './../firebaseApp';
 
 interface FirebaseClientType {
@@ -52,6 +52,10 @@ interface FirebaseClientType {
   // store
   getDocData(): DocumentReference<DocumentData, DocumentData>;
   getPostsObserver(callBack: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
+  getPostObserver(
+    postId: string,
+    callBack: React.Dispatch<React.SetStateAction<PostProps | null>>,
+  ): void;
   getPost(pstId: string): Promise<DocumentSnapshot<DocumentData, DocumentData>>;
   addPost(data: Omit<PostProps, 'id'>): Promise<DocumentReference<DocumentData, DocumentData>>;
   updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown>;
@@ -61,6 +65,8 @@ interface FirebaseClientType {
   getLikePosts(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
   likePost(postId: string, userUid: string, likesCount: number): Promise<void>;
   unLikePost(postId: string, userUid: string, likesCount: number): Promise<void>;
+  addComment(commentInfo: CommentProps, postId: string): Promise<void>;
+  getComments(postId: string): Promise<unknown>;
   // storage
   uploadImage(uuid: string, result: string): Promise<UploadResult>;
   downloadImge(snapshot: UploadResult): Promise<string>;
@@ -73,6 +79,17 @@ class FirebaseClient implements FirebaseClientType {
   constructor() {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
+  }
+  getComments(postId: string): Promise<unknown> {
+    throw new Error('Method not implemented.');
+  }
+
+  addComment(commentInfo: CommentProps, postId: string): Promise<void> {
+    const postRef = doc(db, 'posts', postId);
+
+    return updateDoc(postRef, {
+      comments: arrayUnion(commentInfo),
+    });
   }
   getLikePosts(uid: string) {
     const postsRef = collection(db, 'posts');
@@ -149,6 +166,15 @@ class FirebaseClient implements FirebaseClientType {
         } as PostProps),
       );
       callBack(postsArr);
+    });
+  }
+  getPostObserver(
+    postId: string,
+    callBack: React.Dispatch<React.SetStateAction<PostProps | null>>,
+  ): void {
+    const docRef = doc(db, 'posts', postId);
+    onSnapshot(docRef, doc => {
+      callBack({ id: doc.id, ...doc.data() } as PostProps);
     });
   }
 
