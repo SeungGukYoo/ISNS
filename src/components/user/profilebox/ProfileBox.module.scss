@@ -19,7 +19,6 @@ $dangerActiveColor: #b01e1e;
   align-items: center;
   justify-content: space-around;
   padding: 15px 10px;
-  border-bottom: 1px solid $borderColor;
   margin-bottom: 20px;
 }
 
@@ -87,5 +86,25 @@ $dangerActiveColor: #b01e1e;
   gap: 30px;
   p {
     color: $textColor;
+  }
+}
+
+.profile__tabs {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.profile__tab {
+  text-align: center;
+  font-weight: 500;
+  padding: 16px;
+  cursor: pointer;
+  &_active {
+    font-weight: 700;
+    border-bottom: 2px solid $activeColor;
+  }
+  &:hover,
+  &:focus {
+    background-color: $darkActive;
   }
 }

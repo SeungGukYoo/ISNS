@@ -4,7 +4,7 @@ import { FaUserCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import styles from './ProfileBox.module.scss';
 const ProfileBox = () => {
-  const { user, posts, profileUrl } = useProfile();
+  const { user, posts, tabType, profileUrl, changeTabType } = useProfile();
 
   return (
     <div className={styles.profile}>
@@ -34,11 +34,28 @@ const ProfileBox = () => {
           </div>
         </div>
       </div>
-
+      <div className={styles.profile__tabs}>
+        <div
+          className={`${styles.profile__tab} ${tabType === 'post' && styles.profile__tab_active}`}
+          onClick={() => changeTabType('like')}
+        >
+          POST
+        </div>
+        <div
+          className={`${styles.profile__tab} ${tabType === 'like' && styles.profile__tab_active}`}
+          onClick={() => changeTabType('post')}
+        >
+          LIKE
+        </div>
+      </div>
       <div className={styles.profile__posts}>
-        {posts.map(post => (
-          <PostBox post={post} key={post.id} />
-        ))}
+        {posts.length > 0 ? (
+          posts.map(post => <PostBox post={post} key={post.id} />)
+        ) : (
+          <div className="post__no-post">
+            <div className="post__text">게시글이 없습니다.</div>
+          </div>
+        )}
       </div>
     </div>
   );
