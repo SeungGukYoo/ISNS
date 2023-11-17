@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { PostProps } from '../..';
+import { CommentProps, PostProps } from '../..';
 import { useAuthContext } from './useContextUtil';
 
 const useComments = () => {
@@ -15,6 +15,17 @@ const useComments = () => {
 
     if (name === 'comment') {
       setContent(value);
+    }
+  };
+
+  const deleteComment = async (comment: CommentProps) => {
+    if (!post) return;
+    try {
+      if (confirm('댓글을 삭제하시겠습니까?')) {
+        await firebaseClient?.deleteComment(comment, post.id);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -50,7 +61,7 @@ const useComments = () => {
     };
     getComments();
   }, [firebaseClient, id]);
-  return { post, content, onSubmit, onChangeValue };
+  return { user, post, content, onSubmit, onChangeValue, deleteComment };
 };
 
 export default useComments;
