@@ -58,6 +58,7 @@ interface FirebaseClientType {
   deletePost(postId: string): Promise<void>;
   searchPost(hashtag: string, callback: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
   getPersonalPost(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
+  getLikePosts(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
   likePost(postId: string, userUid: string, likesCount: number): Promise<void>;
   unLikePost(postId: string, userUid: string, likesCount: number): Promise<void>;
   // storage
@@ -73,6 +74,12 @@ class FirebaseClient implements FirebaseClientType {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
   }
+  getLikePosts(uid: string) {
+    const postsRef = collection(db, 'posts');
+    const q = query(postsRef, where('likes', 'array-contains', uid), orderBy('createdAt', 'desc'));
+    return getDocs(q);
+  }
+
   unLikePost(postId: string, userUid: string, likeCount: number): Promise<void> {
     const unLikePostRef = doc(db, 'posts', postId);
     return updateDoc(unLikePostRef, {
@@ -100,6 +107,7 @@ class FirebaseClient implements FirebaseClientType {
     const q = query(postsRef, where('uid', '==', uid), orderBy('createdAt', 'desc'));
     return getDocs(q);
   }
+
   deleteImage(imgUrl: string): Promise<void> {
     const postImgRef = ref(storage, imgUrl);
     return deleteObject(postImgRef);
