@@ -161,15 +161,19 @@ const useForm = () => {
       console.error(error);
     }
   };
-  const likeTooglePost = async (post: PostProps) => {
-    if (!user?.uid) return;
+  const likeTooglePost = async (post: PostProps | null) => {
+    if (!user?.uid || !post) return;
+
     try {
       const likeCount = post?.likes?.length || 0;
-      console.log(post);
       if (post?.likes?.includes(user.uid)) {
         await firebaseClient?.unLikePost(post.id, user?.uid, post?.likeCount - 1 || 0);
       } else {
         await firebaseClient?.likePost(post.id, user?.uid, likeCount + 1);
+      }
+      if (id) {
+        const postData = await firebaseClient?.getPost(id);
+        setPost({ ...postData?.data(), id } as PostProps);
       }
     } catch (err) {
       console.error;
