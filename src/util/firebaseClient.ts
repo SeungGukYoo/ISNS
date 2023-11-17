@@ -17,6 +17,8 @@ import {
   DocumentSnapshot,
   QuerySnapshot,
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -56,6 +58,8 @@ interface FirebaseClientType {
   deletePost(postId: string): Promise<void>;
   searchPost(hashtag: string, callback: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
   getPersonalPost(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
+  likePost(postId: string, userUid: string, likesCount: number): Promise<void>;
+  unLikePost(postId: string, userUid: string, likesCount: number): Promise<void>;
   // storage
   uploadImage(uuid: string, result: string): Promise<UploadResult>;
   downloadImge(snapshot: UploadResult): Promise<string>;
@@ -68,6 +72,20 @@ class FirebaseClient implements FirebaseClientType {
   constructor() {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
+  }
+  unLikePost(postId: string, userUid: string, likeCount: number): Promise<void> {
+    const unLikePostRef = doc(db, 'posts', postId);
+    return updateDoc(unLikePostRef, {
+      likes: arrayRemove(userUid),
+      likeCount,
+    });
+  }
+  likePost(postId: string, userUid: string, likeCount: number) {
+    const likePostRef = doc(db, 'posts', postId);
+    return updateDoc(likePostRef, {
+      likes: arrayUnion(userUid),
+      likeCount,
+    });
   }
   updateProfileData(downloadUrl: string, displayName: string): Promise<void> {
     const auth = getAuth(app);
@@ -128,8 +146,12 @@ class FirebaseClient implements FirebaseClientType {
 
   updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown> {
     const docRef = doc(db, 'posts', postId);
-    return updateDoc(docRef, { ...postData });
+
+    return updateDoc(docRef, {
+      ...postData,
+    });
   }
+
   getPost(postId: string) {
     const docRef = doc(db, 'posts', postId);
     return getDoc(docRef);
