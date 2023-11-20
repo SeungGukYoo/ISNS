@@ -55,7 +55,6 @@ const useComments = () => {
 
   useEffect(() => {
     if (!id) return;
-
     const getComments = () => {
       firebaseClient?.getPostObserver(id, setPost);
     };
