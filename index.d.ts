@@ -9,7 +9,7 @@ export interface CommentProps {
   createdAt: string;
   content: string;
   email: string;
-  profileUrl?: string;
+  photoUrl: string | null;
 }
 export interface PostProps {
   id: string;
