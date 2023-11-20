@@ -1,11 +1,14 @@
-import React from 'react';
-import './App.css';
+import Layout from 'components/Layout';
+import Router from 'components/Router';
+import { useAuthContext } from 'hooks/useContextUtil';
 
 function App() {
+  const { user } = useAuthContext();
+
   return (
-    <div className="App">
-      <header className="App-header">Router</header>
-    </div>
+    <Layout>
+      <Router isAuthenticated={!!user} />
+    </Layout>
   );
 }
 
