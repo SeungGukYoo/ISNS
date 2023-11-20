@@ -1,15 +1,26 @@
 import PostBox from 'components/post/PostBox';
 import PostForm from 'components/post/PostForm';
-import { usePostContext } from 'hooks/useContextUtil';
+
+import usePosts from 'hooks/usePosts';
 
 function HomePage() {
-  const { posts } = usePostContext();
+  const { posts, tabType, changeTabType } = usePosts();
 
   return (
     <div className="home">
       <div className="home__tabs">
-        <div className="home__tab home__tab-active">For YOU</div>
-        <div className="home__tab">Following</div>
+        <div
+          className={`home__tab ${tabType === 'all' && 'home__tab-active'}`}
+          onClick={() => changeTabType('all')}
+        >
+          ALL
+        </div>
+        <div
+          className={`home__tab ${tabType === 'following' && 'home__tab-active'}`}
+          onClick={() => changeTabType('following')}
+        >
+          Following
+        </div>
       </div>
       <PostForm />
       <div className="post">
