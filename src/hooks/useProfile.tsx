@@ -8,6 +8,8 @@ const useProfile = () => {
   const navigate = useNavigate();
   const { user, firebaseClient } = useAuthContext();
   const [displayName, setDisplayName] = useState(user?.displayName);
+  const [following, setFollowing] = useState(0);
+  const [follower, setFollower] = useState(0);
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [profileUrl, setProfileUrl] = useState(user?.photoURL);
   const [tabType, setTabType] = useState<'post' | 'like'>('post');
@@ -102,6 +104,9 @@ const useProfile = () => {
     const getPost = async () => {
       try {
         if (user?.uid) {
+          firebaseClient?.getFollowing(setFollowing, user.uid);
+          firebaseClient?.getFollower(setFollower, user.uid);
+
           const snapshot = await firebaseClient?.getPersonalPost(user?.uid);
           const postsData: PostProps[] = [];
           snapshot?.forEach(element => {
@@ -118,6 +123,8 @@ const useProfile = () => {
 
   return {
     user,
+    follower,
+    following,
     posts,
     profileUrl,
     tabType,
