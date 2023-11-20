@@ -40,7 +40,7 @@ export interface FirebaseClientType {
   updateProfileData(downloadUrl: string, displayName: string): Promise<void>;
 
   // store
-  postObserver(userUid: string | null, path: string): void;
+  getFollowingPost(userId: string): Pormise<unknown>;
   getDocData(): DocumentReference<DocumentData, DocumentData>;
   followObserver(
     callBack: React.Dispatch<React.SetStateAction<boolean>>,
@@ -59,12 +59,17 @@ export interface FirebaseClientType {
   updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown>;
   deletePost(postId: string): Promise<void>;
   searchPost(hashtag: string, callback: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
+
   getPersonalPost(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
+
   getLikePosts(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
+
   likePost(postId: string, userUid: string, likesCount: number): Promise<void>;
   unLikePost(postId: string, userUid: string, likesCount: number): Promise<void>;
+
   addComment(commentInfo: CommentProps, postId: string): Promise<void>;
   deleteComment(userUid: CommentProps, postId: string): Promise<unknown>;
+
   followingUser(myId: string, postId: string): Promise<void>;
   followerUser(myId: string, postId: string): Promise<void>;
   unfollowingUser(myId: string, postId: string): Promise<void>;

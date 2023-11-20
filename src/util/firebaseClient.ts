@@ -12,7 +12,7 @@ import {
 } from 'firebase/auth';
 import {
   DocumentData,
-  DocumentReference,
+  QueryFieldFilterConstraint,
   QuerySnapshot,
   addDoc,
   arrayRemove,
@@ -23,6 +23,7 @@ import {
   getDoc,
   getDocs,
   onSnapshot,
+  or,
   orderBy,
   query,
   setDoc,
@@ -41,6 +42,18 @@ class FirebaseClient implements FirebaseClientType {
   constructor() {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
+  }
+
+  async getFollowingPost(userId: string) {
+    const docRef = doc(db, 'following', userId);
+    const postRef = collection(db, 'posts');
+
+    const idList = (await getDoc(docRef)).data()?.users;
+    if (idList.length === 0) return [];
+    const idFnList = await idList.map((id: string) => where('uid', '==', id));
+
+    const q = query(postRef, or(...idFnList), orderBy('createdAt', 'desc'));
+    return getDocs(q);
   }
   getFollowing(callBack: React.Dispatch<React.SetStateAction<number>>, userId: string): void {
     const docRef = doc(db, 'following', userId);
@@ -68,23 +81,11 @@ class FirebaseClient implements FirebaseClientType {
       const snapshotData = snapShot.data();
       if (snapshotData) {
         const result = snapshotData.users.includes(postId);
-        callBack(result || 0);
+        callBack(result);
       }
     });
   }
-  postObserver(userUid: string | null = null, path: string): (data: string) => void {
-    let ref: DocumentReference<DocumentData, DocumentData> | null = null;
-    if (userUid) {
-      ref = doc(db, path, userUid);
-    } else ref = doc(db, path);
 
-    return (data: string) => {
-      if (!ref) return;
-      onSnapshot(ref, snapShot => {
-        console.log(snapShot.data(), data);
-      });
-    };
-  }
   unfollowingUser(myId: string, postId: string): Promise<void> {
     return updateDoc(doc(db, 'following', myId), {
       users: arrayRemove(postId),
@@ -295,6 +296,21 @@ class FirebaseClient implements FirebaseClientType {
       return user;
     });
   }
+
+  // test
+  // postObserver(userUid: string | null = null, path: string): (data: string) => void {
+  //   let ref: DocumentReference<DocumentData, DocumentData> | null = null;
+  //   if (userUid) {
+  //     ref = doc(db, path, userUid);
+  //   } else ref = doc(db, path);
+
+  //   return (data: string) => {
+  //     if (!ref) return;
+  //     onSnapshot(ref, snapShot => {
+  //       console.log(snapShot.data(), data);
+  //     });
+  //   };
+  // }
 }
 
 export default FirebaseClient;
