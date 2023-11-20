@@ -1,6 +1,5 @@
 import App from 'App';
 import AuthContextProvider from 'context/authContext';
-import PostContextProvider from 'context/postsContext';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -11,10 +10,8 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <Router>
     <AuthContextProvider>
-      <PostContextProvider>
-        <App />
-        <ToastContainer autoClose={1000} hideProgressBar newestOnTop theme="dark" />
-      </PostContextProvider>
+      <App />
+      <ToastContainer autoClose={1000} hideProgressBar newestOnTop theme="dark" />
     </AuthContextProvider>
   </Router>,
 );
