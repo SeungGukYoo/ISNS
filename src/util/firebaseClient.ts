@@ -64,6 +64,8 @@ interface FirebaseClientType {
     postId: string,
     callBack: React.Dispatch<React.SetStateAction<PostProps | null>>,
   ): void;
+  getFollower(callBack: React.Dispatch<React.SetStateAction<number>>, userId: string): void;
+  getFollowing(callBack: React.Dispatch<React.SetStateAction<number>>, userId: string): void;
   getPost(pstId: string): Promise<DocumentSnapshot<DocumentData, DocumentData>>;
   addPost(data: Omit<PostProps, 'id'>): Promise<DocumentReference<DocumentData, DocumentData>>;
   updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown>;
@@ -92,6 +94,21 @@ class FirebaseClient implements FirebaseClientType {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
   }
+  getFollowing(callBack: React.Dispatch<React.SetStateAction<number>>, userId: string): void {
+    const docRef = doc(db, 'following', userId);
+
+    onSnapshot(docRef, snapShot => {
+      const snapshotData = snapShot.data();
+      callBack(snapshotData?.users.length);
+    });
+  }
+  getFollower(callBack: React.Dispatch<React.SetStateAction<number>>, userId: string): void {
+    const docRef = doc(db, 'follower', userId);
+    onSnapshot(docRef, snapShot => {
+      const snapshotData = snapShot.data();
+      callBack(snapshotData?.users.length || 0);
+    });
+  }
   followObserver(
     callBack: Dispatch<SetStateAction<boolean>>,
     userId: string,
@@ -103,7 +120,7 @@ class FirebaseClient implements FirebaseClientType {
       const snapshotData = snapShot.data();
       if (snapshotData) {
         const result = snapshotData.users.includes(postId);
-        callBack(result);
+        callBack(result || 0);
       }
     });
   }
