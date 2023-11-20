@@ -6,27 +6,31 @@ const usePosts = () => {
   const { user, firebaseClient } = useAuthContext();
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [tabType, setTabType] = useState<'all' | 'following'>('all');
-  const changeTabType = useCallback(async (type: typeof tabType) => {
-    if (!user) return;
+  const changeTabType = useCallback(
+    async (type: typeof tabType) => {
+      if (!user) return;
 
-    try {
-      let snapShot;
-      if (type === 'following') {
-        snapShot = await firebaseClient?.getLikePosts(user?.uid);
-        const postsData: PostProps[] = [];
-        snapShot?.forEach(element => {
-          postsData.push({ ...element.data(), id: element.id } as PostProps);
-        });
-        setPosts(postsData);
-        setTabType('following');
-      } else {
-        firebaseClient?.getPostsObserver(setPosts);
-        setTabType('all');
+      try {
+        if (type === 'following') {
+          const postsData: PostProps[] = [];
+          const followingPostList = await firebaseClient?.getFollowingPost(user.uid);
+
+          followingPostList?.forEach(post => {
+            postsData.push({ id: post.id, ...post.data() } as PostProps);
+          });
+
+          setPosts(postsData || null);
+          setTabType('following');
+        } else {
+          firebaseClient?.getPostsObserver(setPosts);
+          setTabType('all');
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+    },
+    [firebaseClient, user],
+  );
 
   useEffect(() => {
     changeTabType('all');
