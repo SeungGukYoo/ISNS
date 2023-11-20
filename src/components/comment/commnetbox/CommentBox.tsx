@@ -1,5 +1,4 @@
 import useComments from 'hooks/useComments';
-import { useAuthContext } from 'hooks/useContextUtil';
 import React from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { CommentProps } from '../../../..';
@@ -7,12 +6,13 @@ import styles from './CommentBox.module.scss';
 
 const CommentBox = ({ comment }: { comment: CommentProps }) => {
   const { user, deleteComment } = useComments();
+
   return (
     <div className={styles.comment}>
       <div className={styles.comment__header}>
         <div className={styles.comment__profile_box}>
-          {comment.profileUrl ? (
-            <img src={comment.profileUrl} alt="" />
+          {comment.photoUrl ? (
+            <img src={comment.photoUrl} alt="" />
           ) : (
             <FaUserCircle className={styles.profile__icon} />
           )}
@@ -32,4 +32,4 @@ const CommentBox = ({ comment }: { comment: CommentProps }) => {
   );
 };
 
-export default CommentBox;
+export default React.memo(CommentBox);
