@@ -27,11 +27,13 @@ import {
   onSnapshot,
   orderBy,
   query,
+  setDoc,
   updateDoc,
   where,
 } from 'firebase/firestore';
 import { UploadResult, deleteObject, getDownloadURL, ref, uploadString } from 'firebase/storage';
 import app, { db } from 'firebaseApp';
+import { Dispatch, SetStateAction } from 'react';
 import { CommentProps, PostProps } from '../..';
 import { storage } from './../firebaseApp';
 
@@ -50,7 +52,13 @@ interface FirebaseClientType {
   updateProfileData(downloadUrl: string, displayName: string): Promise<void>;
 
   // store
+  postObserver(userUid: string | null, path: string): void;
   getDocData(): DocumentReference<DocumentData, DocumentData>;
+  followObserver(
+    callBack: React.Dispatch<React.SetStateAction<boolean>>,
+    userId: string,
+    postId: string,
+  ): void;
   getPostsObserver(callBack: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
   getPostObserver(
     postId: string,
@@ -67,6 +75,10 @@ interface FirebaseClientType {
   unLikePost(postId: string, userUid: string, likesCount: number): Promise<void>;
   addComment(commentInfo: CommentProps, postId: string): Promise<void>;
   deleteComment(userUid: CommentProps, postId: string): Promise<unknown>;
+  followingUser(myId: string, postId: string): Promise<void>;
+  followerUser(myId: string, postId: string): Promise<void>;
+  unfollowingUser(myId: string, postId: string): Promise<void>;
+  unfollowerUser(myId: string, postId: string): Promise<void>;
   // storage
   uploadImage(uuid: string, result: string): Promise<UploadResult>;
   downloadImge(snapshot: UploadResult): Promise<string>;
@@ -80,6 +92,67 @@ class FirebaseClient implements FirebaseClientType {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
   }
+  followObserver(
+    callBack: Dispatch<SetStateAction<boolean>>,
+    userId: string,
+    postId: string,
+  ): void {
+    const ref = doc(db, 'following', userId);
+
+    onSnapshot(ref, snapShot => {
+      const snapshotData = snapShot.data();
+      if (snapshotData) {
+        const result = snapshotData.users.includes(postId);
+        callBack(result);
+      }
+    });
+  }
+  postObserver(userUid: string | null = null, path: string): (data: string) => void {
+    let ref: DocumentReference<DocumentData, DocumentData> | null = null;
+    if (userUid) {
+      ref = doc(db, path, userUid);
+    } else ref = doc(db, path);
+
+    return (data: string) => {
+      if (!ref) return;
+      onSnapshot(ref, snapShot => {
+        console.log(snapShot.data(), data);
+      });
+    };
+  }
+  unfollowingUser(myId: string, postId: string): Promise<void> {
+    return updateDoc(doc(db, 'following', myId), {
+      users: arrayRemove(postId),
+    });
+  }
+  unfollowerUser(myId: string, postId: string): Promise<void> {
+    return updateDoc(doc(db, 'follower', postId), {
+      users: arrayRemove(myId),
+    });
+  }
+  followerUser(myId: string, postId: string): Promise<void> {
+    return setDoc(
+      doc(db, 'follower', postId),
+      {
+        users: arrayUnion(myId),
+      },
+      {
+        merge: true,
+      },
+    );
+  }
+  followingUser(myId: string, postId: string): Promise<void> {
+    return setDoc(
+      doc(db, 'following', myId),
+      {
+        users: arrayUnion(postId),
+      },
+      {
+        merge: true,
+      },
+    );
+  }
+
   deleteComment(userUid: CommentProps, postId: string): Promise<unknown> {
     const postRef = doc(db, 'posts', postId);
     return updateDoc(postRef, {
