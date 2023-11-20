@@ -299,6 +299,28 @@ a {
     display: flex;
     gap: 4px;
     align-items: center;
+    &-between {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+  &__following-btn {
+    @extend .button;
+    background-color: $primaryColor;
+    &:hover,
+    &:focus {
+      background-color: $activeColor;
+    }
+  }
+  &__unfollowing-btn {
+    @extend .button;
+    background-color: $white;
+    color: $primaryColor;
+    &:hover,
+    &:focus {
+      background-color: #d1d1d1;
+    }
   }
   &__email,
   &__createdAt {
