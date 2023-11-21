@@ -1,3 +1,4 @@
+import { FaUserCircle } from 'react-icons/fa';
 import { NotificationType } from '../../..';
 
 const NotificationBox = ({ notification }: { notification: NotificationType }) => {
@@ -5,7 +6,11 @@ const NotificationBox = ({ notification }: { notification: NotificationType }) =
     <div className="notification">
       <div className="notification__flex">
         <div className="notification__img-box">
-          {notification.photoUrl ? <img src={notification.photoUrl} alt="" /> : 'null'}
+          {notification.photoUrl ? (
+            <img src={notification.photoUrl} alt="" />
+          ) : (
+            <FaUserCircle className="notification__icon" />
+          )}
         </div>
         <div className="notification__content-box">
           <p className="notification__content">{notification.content}</p>
