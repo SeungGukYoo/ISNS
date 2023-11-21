@@ -22,7 +22,7 @@ const PostDetailForm = () => {
                 <div className="post__email">{post?.email}</div>
                 <div className="post__createdAt">{post?.createdAt}</div>
               </div>
-              {user?.uid !== id && post && <FollowBox post={post} />}
+              {user?.uid !== post?.uid && post && <FollowBox post={post} />}
             </div>
           </div>
           {post?.imageUrl && (
