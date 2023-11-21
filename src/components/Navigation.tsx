@@ -2,7 +2,7 @@ import { useAuthContext } from 'hooks/useContextUtil';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { BiUser } from 'react-icons/bi';
 import { BsHouse } from 'react-icons/bs';
-import { IoIosLogIn, IoIosLogOut } from 'react-icons/io';
+import { IoIosLogIn, IoIosLogOut, IoIosNotificationsOutline } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -30,6 +30,9 @@ export default function Navigation() {
         </button>
         <button type="button" onClick={() => navigate('/profile')}>
           <BiUser className="navigation__icon" /> Profile
+        </button>
+        <button type="button" onClick={() => navigate('/notifications')}>
+          <IoIosNotificationsOutline className="navigation__icon" /> Notification
         </button>
         <button type="button" onClick={() => navigate('/search')}>
           <AiOutlineSearch className="navigation__icon" /> Search
