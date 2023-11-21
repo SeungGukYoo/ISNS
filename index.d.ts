@@ -32,6 +32,8 @@ export interface NotificationType {
   content: string;
   postId: string;
   read: boolean;
+  url?: string;
+  id: string;
 }
 
 export interface FirebaseClientType {
@@ -78,7 +80,14 @@ export interface FirebaseClientType {
   followerUser(myId: string, postId: string): Promise<void>;
   unfollowingUser(myId: string, postId: string): Promise<void>;
   unfollowerUser(myId: string, postId: string): Promise<void>;
-  addNotification(notificationInfo: NotificationType): Promise<void>;
+  addNotification(
+    notificationInfo: NotificationType,
+  ): Promise<DocumentReference<DocumentData, DocumentData>>;
+  getNotification(
+    userId: string,
+    callBack: React.Dispatch<React.SetStateAction<NotificationType[] | null>>,
+  ): void;
+  updateNotification(postId: string): Promise<void>;
   // storage
   uploadImage(uuid: string, result: string): Promise<UploadResult>;
   downloadImge(snapshot: UploadResult): Promise<string>;
