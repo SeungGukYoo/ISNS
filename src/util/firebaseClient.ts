@@ -12,6 +12,7 @@ import {
 } from 'firebase/auth';
 import {
   DocumentData,
+  DocumentReference,
   QuerySnapshot,
   addDoc,
   arrayRemove,
@@ -42,17 +43,33 @@ class FirebaseClient implements FirebaseClientType {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
   }
-  addNotification(notificationInfo: NotificationType): Promise<void> {
-    const notificationRef = doc(db, 'notification', notificationInfo.postId);
-    return setDoc(
-      notificationRef,
-      {
-        notifications: arrayUnion(notificationInfo),
-      },
-      {
-        merge: true,
-      },
-    );
+  updateNotification(postId: string): Promise<void> {
+    const updatePostRef = doc(db, 'notification', postId);
+    return updateDoc(updatePostRef, {
+      read: true,
+    });
+  }
+  getNotification(
+    userId: string,
+    callBack: Dispatch<SetStateAction<NotificationType[] | null>>,
+  ): void {
+    const docRef = collection(db, 'notification');
+
+    const queryRef = query(docRef, where('postId', '==', userId), orderBy('createdAt', 'desc'));
+    onSnapshot(queryRef, snapShot => {
+      const notificationArr: NotificationType[] = [];
+      snapShot.forEach(info => {
+        notificationArr.push({ id: info.id, ...info.data() } as NotificationType);
+      });
+      callBack(notificationArr);
+    });
+  }
+
+  addNotification(
+    notificationInfo: Omit<NotificationType, 'id'>,
+  ): Promise<DocumentReference<DocumentData, DocumentData>> {
+    const notificationRef = collection(db, 'notification');
+    return addDoc(notificationRef, notificationInfo);
   }
 
   async getFollowingPost(userId: string) {
