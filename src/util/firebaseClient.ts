@@ -12,7 +12,6 @@ import {
 } from 'firebase/auth';
 import {
   DocumentData,
-  QueryFieldFilterConstraint,
   QuerySnapshot,
   addDoc,
   arrayRemove,
@@ -33,7 +32,7 @@ import {
 import { UploadResult, deleteObject, getDownloadURL, ref, uploadString } from 'firebase/storage';
 import app, { db } from 'firebaseApp';
 import { Dispatch, SetStateAction } from 'react';
-import { CommentProps, FirebaseClientType, PostProps } from '../..';
+import { CommentProps, FirebaseClientType, NotificationType, PostProps } from '../..';
 import { storage } from './../firebaseApp';
 
 class FirebaseClient implements FirebaseClientType {
@@ -42,6 +41,18 @@ class FirebaseClient implements FirebaseClientType {
   constructor() {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
+  }
+  addNotification(notificationInfo: NotificationType): Promise<void> {
+    const notificationRef = doc(db, 'notification', notificationInfo.postId);
+    return setDoc(
+      notificationRef,
+      {
+        notifications: arrayUnion(notificationInfo),
+      },
+      {
+        merge: true,
+      },
+    );
   }
 
   async getFollowingPost(userId: string) {
@@ -296,21 +307,6 @@ class FirebaseClient implements FirebaseClientType {
       return user;
     });
   }
-
-  // test
-  // postObserver(userUid: string | null = null, path: string): (data: string) => void {
-  //   let ref: DocumentReference<DocumentData, DocumentData> | null = null;
-  //   if (userUid) {
-  //     ref = doc(db, path, userUid);
-  //   } else ref = doc(db, path);
-
-  //   return (data: string) => {
-  //     if (!ref) return;
-  //     onSnapshot(ref, snapShot => {
-  //       console.log(snapShot.data(), data);
-  //     });
-  //   };
-  // }
 }
 
 export default FirebaseClient;
