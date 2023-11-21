@@ -56,6 +56,7 @@ const useComments = () => {
         content: `${user?.email}님께서 댓글을 작성하였습니다.`,
         postId: post?.uid,
         read: false,
+        url: post.id,
       };
       await firebaseClient?.addNotification(notificationInfo);
       await firebaseClient?.addComment(commentInfo, post.id);
