@@ -24,6 +24,15 @@ export interface PostProps {
   comments?: CommentProps[];
   hashtags: string[];
 }
+export interface NotificationType {
+  uid: string;
+  email: string;
+  photoUrl: string | null;
+  createdAt: string;
+  content: string;
+  postId: string;
+  read: boolean;
+}
 
 export interface FirebaseClientType {
   gitHubProvider: GithubAuthProvider;
@@ -59,21 +68,17 @@ export interface FirebaseClientType {
   updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown>;
   deletePost(postId: string): Promise<void>;
   searchPost(hashtag: string, callback: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
-
   getPersonalPost(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
-
   getLikePosts(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
-
   likePost(postId: string, userUid: string, likesCount: number): Promise<void>;
   unLikePost(postId: string, userUid: string, likesCount: number): Promise<void>;
-
   addComment(commentInfo: CommentProps, postId: string): Promise<void>;
   deleteComment(userUid: CommentProps, postId: string): Promise<unknown>;
-
   followingUser(myId: string, postId: string): Promise<void>;
   followerUser(myId: string, postId: string): Promise<void>;
   unfollowingUser(myId: string, postId: string): Promise<void>;
   unfollowerUser(myId: string, postId: string): Promise<void>;
+  addNotification(notificationInfo: NotificationType): Promise<void>;
   // storage
   uploadImage(uuid: string, result: string): Promise<UploadResult>;
   downloadImge(snapshot: UploadResult): Promise<string>;
