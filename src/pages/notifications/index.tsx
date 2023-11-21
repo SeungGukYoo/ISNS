@@ -1,5 +1,7 @@
+import Notification from 'components/notification/Notification';
+
 function NotificationsPage() {
-  return <div>NotificationsPage</div>;
+  return <Notification />;
 }
 
 export default NotificationsPage;

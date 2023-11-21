@@ -44,7 +44,23 @@ const useComments = () => {
         }),
         content,
       };
-
+      if (user.uid !== post.id) {
+        const notificationInfo = {
+          uid: user?.uid,
+          email: user?.email || '',
+          photoUrl: user?.photoURL,
+          createdAt: new Date().toLocaleDateString('ko', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          }),
+          content: `${user?.email}님께서 댓글을 작성하였습니다.`,
+          postId: post?.uid,
+          read: false,
+          url: post.id,
+        };
+        await firebaseClient?.addNotification(notificationInfo);
+      }
       await firebaseClient?.addComment(commentInfo, post.id);
 
       setContent('');

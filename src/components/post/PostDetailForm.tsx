@@ -1,4 +1,5 @@
 import CommentForm from 'components/comment/commentForm/CommentForm';
+import FollowBox from 'components/follow/FollowBox';
 import useForm from 'hooks/useForm';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { FaRegComment, FaUserCircle } from 'react-icons/fa';
@@ -16,8 +17,13 @@ const PostDetailForm = () => {
             ) : (
               <FaUserCircle className="post__box-icon" />
             )}
-            <div className="post__email">{post?.email}</div>
-            <div className="post__createdAt">{post?.createdAt}</div>
+            <div className="post__flex-between">
+              <div className="post__flex">
+                <div className="post__email">{post?.email}</div>
+                <div className="post__createdAt">{post?.createdAt}</div>
+              </div>
+              {user?.uid !== post?.uid && post && <FollowBox post={post} />}
+            </div>
           </div>
           {post?.imageUrl && (
             <div className="post__image">

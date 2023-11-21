@@ -1,5 +1,4 @@
 import {
-  Auth,
   GithubAuthProvider,
   GoogleAuthProvider,
   User,
@@ -14,7 +13,6 @@ import {
 import {
   DocumentData,
   DocumentReference,
-  DocumentSnapshot,
   QuerySnapshot,
   addDoc,
   arrayRemove,
@@ -25,53 +23,18 @@ import {
   getDoc,
   getDocs,
   onSnapshot,
+  or,
   orderBy,
   query,
+  setDoc,
   updateDoc,
   where,
 } from 'firebase/firestore';
 import { UploadResult, deleteObject, getDownloadURL, ref, uploadString } from 'firebase/storage';
 import app, { db } from 'firebaseApp';
-import { CommentProps, PostProps } from '../..';
+import { Dispatch, SetStateAction } from 'react';
+import { CommentProps, FirebaseClientType, NotificationType, PostProps } from '../..';
 import { storage } from './../firebaseApp';
-
-interface FirebaseClientType {
-  gitHubProvider: GithubAuthProvider;
-  googleProvider: GoogleAuthProvider;
-  // authenticate
-  getAuthData(): Auth;
-  authChanged(callback: React.Dispatch<React.SetStateAction<User | null>>): void;
-  createEmailUser(email: string, password: string): Promise<User>;
-  loginEmail(email: string, password: string): Promise<User>;
-  companyLogin(company: string): Promise<User | undefined>;
-  loginGoogle(): Promise<User>;
-  loginGithub(): Promise<User>;
-  logoutUser(): Promise<void>;
-  updateProfileData(downloadUrl: string, displayName: string): Promise<void>;
-
-  // store
-  getDocData(): DocumentReference<DocumentData, DocumentData>;
-  getPostsObserver(callBack: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
-  getPostObserver(
-    postId: string,
-    callBack: React.Dispatch<React.SetStateAction<PostProps | null>>,
-  ): void;
-  getPost(pstId: string): Promise<DocumentSnapshot<DocumentData, DocumentData>>;
-  addPost(data: Omit<PostProps, 'id'>): Promise<DocumentReference<DocumentData, DocumentData>>;
-  updatePost(postId: string, postData: Omit<PostProps, 'id'>): Promise<unknown>;
-  deletePost(postId: string): Promise<void>;
-  searchPost(hashtag: string, callback: React.Dispatch<React.SetStateAction<PostProps[]>>): void;
-  getPersonalPost(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
-  getLikePosts(uid: string): Promise<QuerySnapshot<DocumentData, DocumentData>>;
-  likePost(postId: string, userUid: string, likesCount: number): Promise<void>;
-  unLikePost(postId: string, userUid: string, likesCount: number): Promise<void>;
-  addComment(commentInfo: CommentProps, postId: string): Promise<void>;
-  deleteComment(userUid: CommentProps, postId: string): Promise<unknown>;
-  // storage
-  uploadImage(uuid: string, result: string): Promise<UploadResult>;
-  downloadImge(snapshot: UploadResult): Promise<string>;
-  deleteImage(uuid: string, imgUrl: string): Promise<void>;
-}
 
 class FirebaseClient implements FirebaseClientType {
   gitHubProvider: GithubAuthProvider;
@@ -80,6 +43,110 @@ class FirebaseClient implements FirebaseClientType {
     this.googleProvider = new GoogleAuthProvider();
     this.gitHubProvider = new GithubAuthProvider();
   }
+  updateNotification(postId: string): Promise<void> {
+    const updatePostRef = doc(db, 'notification', postId);
+    return updateDoc(updatePostRef, {
+      read: true,
+    });
+  }
+  getNotification(
+    userId: string,
+    callBack: Dispatch<SetStateAction<NotificationType[] | null>>,
+  ): void {
+    const docRef = collection(db, 'notification');
+
+    const queryRef = query(docRef, where('postId', '==', userId), orderBy('createdAt', 'desc'));
+    onSnapshot(queryRef, snapShot => {
+      const notificationArr: NotificationType[] = [];
+      snapShot.forEach(info => {
+        notificationArr.push({ id: info.id, ...info.data() } as NotificationType);
+      });
+      callBack(notificationArr);
+    });
+  }
+
+  addNotification(
+    notificationInfo: Omit<NotificationType, 'id'>,
+  ): Promise<DocumentReference<DocumentData, DocumentData>> {
+    const notificationRef = collection(db, 'notification');
+    return addDoc(notificationRef, notificationInfo);
+  }
+
+  async getFollowingPost(userId: string) {
+    const docRef = doc(db, 'following', userId);
+    const postRef = collection(db, 'posts');
+
+    const idList = (await getDoc(docRef)).data()?.users;
+    if (idList.length === 0) return [];
+    const idFnList = await idList.map((id: string) => where('uid', '==', id));
+
+    const q = query(postRef, or(...idFnList), orderBy('createdAt', 'desc'));
+    return getDocs(q);
+  }
+  getFollowing(callBack: React.Dispatch<React.SetStateAction<number>>, userId: string): void {
+    const docRef = doc(db, 'following', userId);
+
+    onSnapshot(docRef, snapShot => {
+      const snapshotData = snapShot.data();
+      callBack(snapshotData?.users.length);
+    });
+  }
+  getFollower(callBack: React.Dispatch<React.SetStateAction<number>>, userId: string): void {
+    const docRef = doc(db, 'follower', userId);
+    onSnapshot(docRef, snapShot => {
+      const snapshotData = snapShot.data();
+      callBack(snapshotData?.users.length || 0);
+    });
+  }
+  followObserver(
+    callBack: Dispatch<SetStateAction<boolean>>,
+    userId: string,
+    postId: string,
+  ): void {
+    const ref = doc(db, 'following', userId);
+
+    onSnapshot(ref, snapShot => {
+      const snapshotData = snapShot.data();
+      if (snapshotData) {
+        const result = snapshotData.users.includes(postId);
+        callBack(result);
+      }
+    });
+  }
+
+  unfollowingUser(myId: string, postId: string): Promise<void> {
+    return updateDoc(doc(db, 'following', myId), {
+      users: arrayRemove(postId),
+    });
+  }
+  unfollowerUser(myId: string, postId: string): Promise<void> {
+    return updateDoc(doc(db, 'follower', postId), {
+      users: arrayRemove(myId),
+    });
+  }
+  followerUser(myId: string, postId: string): Promise<void> {
+    return setDoc(
+      doc(db, 'follower', postId),
+      {
+        users: arrayUnion(myId),
+      },
+      {
+        merge: true,
+      },
+    );
+  }
+  followingUser(myId: string, postId: string): Promise<void> {
+    return setDoc(
+      doc(db, 'following', myId),
+      {
+        users: arrayUnion(postId),
+      },
+      {
+        merge: true,
+      },
+    );
+  }
+
   deleteComment(userUid: CommentProps, postId: string): Promise<unknown> {
     const postRef = doc(db, 'posts', postId);
     return updateDoc(postRef, {

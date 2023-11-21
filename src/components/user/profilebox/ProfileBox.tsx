@@ -4,7 +4,7 @@ import { FaUserCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import styles from './ProfileBox.module.scss';
 const ProfileBox = () => {
-  const { user, posts, tabType, profileUrl, changeTabType } = useProfile();
+  const { user, posts, follower, following, tabType, profileUrl, changeTabType } = useProfile();
 
   return (
     <div className={styles.profile}>
@@ -26,11 +26,10 @@ const ProfileBox = () => {
             <p className={styles.name}>
               {user?.displayName ? `Name: ${user?.displayName}` : '이름을 작성해주세요'}
             </p>
-            <p>Post Count: {posts.length}</p>
           </div>
           <div className={styles.profile__follower}>
-            <p className={styles.follower}>Follower: 5</p>
-            <p className={styles.following}>Following: 1</p>
+            <p className={styles.following}>Following: {following}</p>
+            <p className={styles.follower}>Follower: {follower}</p>
           </div>
         </div>
       </div>
