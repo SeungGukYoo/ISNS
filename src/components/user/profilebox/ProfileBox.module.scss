@@ -1,0 +1,117 @@
+$font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+  'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+$dark: #1e293b;
+$darkActive: #405277;
+$white: #fff;
+$gray: #6b7280;
+$grayDark: #595c62;
+$textColor: #9ca3af;
+$activeColor: #3b82f6;
+$borderColor: #708090;
+$primaryColor: #60a5fa;
+$dangerColor: #dc2626;
+$dangerActiveColor: #b01e1e;
+.profile {
+  position: relative;
+  &__btn_box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 20px;
+  }
+}
+.profile__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 15px 10px;
+  margin-bottom: 20px;
+}
+
+.profile__img {
+  text-align: center;
+  img {
+    border-radius: 50%;
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+  }
+  .default__image {
+    border-radius: 50%;
+    width: 96px;
+    height: 96px;
+  }
+}
+.upload__page_btn,
+.profile__language {
+  font-size: 14px;
+  display: block;
+  border: 1px solid $borderColor;
+  padding: 4px 10px;
+  border-radius: 5px;
+
+  color: $textColor;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    color: $gray;
+  }
+}
+
+.updateBtn {
+  font-size: 18px;
+  border: 1px solid $primaryColor;
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+  color: $primaryColor;
+  cursor: pointer;
+  position: absolute;
+  top: -20px;
+  right: 20px;
+  &:hover,
+  &:focus {
+    border-color: $activeColor;
+    color: $activeColor;
+  }
+}
+.profile__info {
+  font-family: $font;
+  p {
+    color: $textColor;
+  }
+  .email {
+    font-size: 18px;
+  }
+  .name {
+    font-size: 18px;
+  }
+}
+.profile__follower {
+  display: flex;
+  gap: 30px;
+  p {
+    color: $textColor;
+  }
+}
+
+.profile__tabs {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.profile__tab {
+  text-align: center;
+  font-weight: 500;
+  padding: 16px;
+  cursor: pointer;
+  &_active {
+    font-weight: 700;
+    border-bottom: 2px solid $activeColor;
+  }
+  &:hover,
+  &:focus {
+    background-color: $darkActive;
+  }
+}

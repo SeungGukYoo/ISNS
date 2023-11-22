@@ -1,0 +1,106 @@
+$font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+  'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+$dark: #1e293b;
+$darkActive: #405277;
+$white: #fff;
+$gray: #6b7280;
+$grayDark: #595c62;
+$textColor: #9ca3af;
+$activeColor: #3b82f6;
+$borderColor: #708090;
+$primaryColor: #60a5fa;
+$dangerColor: #dc2626;
+$dangerActiveColor: #b01e1e;
+.profile {
+  position: relative;
+}
+.profile__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 15px 10px;
+  border-bottom: 1px solid $borderColor;
+  margin-bottom: 20px;
+}
+
+.profile__img {
+  text-align: center;
+  img {
+    border-radius: 50%;
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+  }
+  .default__image {
+    border-radius: 50%;
+    width: 96px;
+    height: 96px;
+  }
+}
+.btn__container {
+  display: flex;
+  gap: 10px;
+}
+.upload__btn {
+  font-size: 14px;
+  display: flex;
+  border: 1px solid $borderColor;
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+  color: $textColor;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    color: $gray;
+    border: 1px solid $gray;
+  }
+}
+
+.delete__btn {
+  font-size: 14px;
+  display: flex;
+  border: 1px solid $dangerColor;
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+  color: $dangerColor;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    color: $dangerActiveColor;
+    border: 1px solid $dangerActiveColor;
+  }
+}
+.name__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.name {
+  display: block;
+  color: $gray;
+
+  input {
+    border: 1px solid $borderColor;
+    border-radius: 4px;
+    padding: 10px 8px;
+    outline: none;
+    margin-left: 10px;
+    color: $gray;
+  }
+}
+
+.submit__btn {
+  font-size: 14px;
+  border-radius: 5px;
+  margin-top: 20px;
+  border: 1px solid $primaryColor;
+  padding: 4px 10px;
+  background-color: $primaryColor;
+  color: $white;
+  cursor: pointer;
+}
