@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuthContext } from './useContextUtil';
+import useLanguage from './useLanguage';
 
 const useSignup = () => {
   const navigate = useNavigate();
+  const setLanguage = useLanguage;
   const { firebaseClient } = useAuthContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -67,7 +69,7 @@ const useSignup = () => {
       }
     }
   };
-  return { email, password, confirmPassword, error, onChangeValue, onSubmitForm };
+  return { email, password, confirmPassword, error, setLanguage, onChangeValue, onSubmitForm };
 };
 
 export default useSignup;
