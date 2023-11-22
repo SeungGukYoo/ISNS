@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useAuthContext } from './useContextUtil';
+import useLanguage from './useLanguage';
 
 const useSignin = () => {
   const { firebaseClient } = useAuthContext();
+  const setLanguage = useLanguage;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<null | string>(null);
@@ -29,7 +31,7 @@ const useSignin = () => {
     try {
       e.preventDefault();
       if (firebaseClient) {
-        const response = await toast.promise(firebaseClient?.loginEmail(email, password), {
+        await toast.promise(firebaseClient?.loginEmail(email, password), {
           pending: '로그인중입니다.',
           success: '환영합니다.',
           error: '예기치 못한 에러가 발생했습니다.',
@@ -53,7 +55,7 @@ const useSignin = () => {
       console.error(error);
     }
   };
-  return { email, password, error, onChangeValue, onSubmitForm, webLogin };
+  return { email, password, error, setLanguage, onChangeValue, onSubmitForm, webLogin };
 };
 
 export default useSignin;

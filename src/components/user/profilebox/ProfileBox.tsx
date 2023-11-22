@@ -4,7 +4,17 @@ import { FaUserCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import styles from './ProfileBox.module.scss';
 const ProfileBox = () => {
-  const { user, posts, follower, following, tabType, profileUrl, changeTabType } = useProfile();
+  const {
+    user,
+    posts,
+    follower,
+    following,
+    tabType,
+    profileUrl,
+    language,
+    changeTabType,
+    changeLanguage,
+  } = useProfile();
 
   return (
     <div className={styles.profile}>
@@ -15,9 +25,14 @@ const ProfileBox = () => {
           ) : (
             <FaUserCircle className={styles.default__image} />
           )}
-          <Link className={styles.upload__page_btn} to="/profile/edit">
-            Profile Edit
-          </Link>
+          <div className={styles.profile__btn_box}>
+            <Link className={styles.upload__page_btn} to="/profile/edit">
+              Profile Edit
+            </Link>
+            <button className={styles.profile__language} onClick={changeLanguage}>
+              {language === 'ko' ? 'English' : '한국어'}
+            </button>
+          </div>
         </div>
 
         <div>

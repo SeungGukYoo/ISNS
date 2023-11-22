@@ -1,11 +1,14 @@
+import languageState from 'atom';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { PostProps } from '../..';
 import { useAuthContext } from './useContextUtil';
 const useProfile = () => {
   const navigate = useNavigate();
+  const [language, setLanguage] = useRecoilState(languageState);
   const { user, firebaseClient } = useAuthContext();
   const [displayName, setDisplayName] = useState(user?.displayName);
   const [following, setFollowing] = useState(0);
@@ -100,6 +103,18 @@ const useProfile = () => {
     }
   };
 
+  const changeLanguage = () => {
+    const infoText =
+      language === 'ko'
+        ? '영어로 바꾸시겠습니까?\n Would you like to change it to English?'
+        : '한국어로 바꾸시겠습니까?\n Would you like to change it to Korean?';
+
+    if (confirm(infoText)) {
+      setLanguage(prev => (prev === 'ko' ? 'en' : 'ko'));
+      localStorage.setItem('language', language === 'ko' ? 'en' : 'ko');
+    }
+  };
+
   useEffect(() => {
     const getPost = async () => {
       try {
@@ -128,10 +143,12 @@ const useProfile = () => {
     posts,
     profileUrl,
     tabType,
+    language,
     changeTabType,
     updateProfile,
     uploadProfile,
     changeValue,
+    changeLanguage,
     deleteProfilePhoto,
   };
 };

@@ -3,13 +3,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const SignUpForm = () => {
-  const { email, password, confirmPassword, error, onChangeValue, onSubmitForm } = useSignup();
+  const { email, password, confirmPassword, error, setLanguage, onChangeValue, onSubmitForm } =
+    useSignup();
 
   return (
     <form className="form form-lg" onSubmit={onSubmitForm}>
-      <div className="form__title">회원가입</div>
+      <div className="form__title">{setLanguage('SIGN_UP')}</div>
       <div className="form__block">
-        <label htmlFor="email">이메일</label>
+        <label htmlFor="email">{setLanguage('EMAIL')}</label>
         <input
           type="text"
           name="email"
@@ -20,7 +21,7 @@ const SignUpForm = () => {
         />
       </div>
       <div className="form__block">
-        <label htmlFor="password">비밀번호</label>
+        <label htmlFor="password">{setLanguage('PASSWORD')}</label>
         <input
           type="password"
           name="password"
@@ -31,7 +32,7 @@ const SignUpForm = () => {
         />
       </div>
       <div className="form__block">
-        <label htmlFor="confirm_password">비밀번호</label>
+        <label htmlFor="confirm_password">{setLanguage('PASSWORD_COMFIRM')}</label>
         <input
           type="password"
           name="confirm_password"
@@ -43,12 +44,12 @@ const SignUpForm = () => {
       </div>
       <div className="form__block error-msg">{error}</div>
       <div className="form__block">
-        계졍이 있으신가요?
-        <Link to="/signin">로그인하기</Link>
+        {setLanguage('SIGNUP_TEXT')}
+        <Link to="/signin">{setLanguage('SIGNUP_TEXT_BTN')}</Link>
       </div>
       <div className="form__block">
         <button type="submit" className="form__btn-submit" disabled={!!error}>
-          회원가입
+          {setLanguage('SIGN_UP')}
         </button>
       </div>
     </form>

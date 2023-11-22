@@ -1,13 +1,15 @@
+import useLanguage from 'hooks/useLanguage';
 import useSignin from 'hooks/useSignin';
 import { Link } from 'react-router-dom';
 
 const SignInForm = () => {
-  const { email, password, error, onChangeValue, onSubmitForm, webLogin } = useSignin();
+  const { email, password, error, setLanguage, onChangeValue, onSubmitForm, webLogin } =
+    useSignin();
   return (
     <form onSubmit={onSubmitForm} className="form form-lg">
-      <div className="form__title">회원가입</div>
+      <div className="form__title">{setLanguage('SIGN_IN')}</div>
       <div className="form__block">
-        <label htmlFor="email">이메일</label>
+        <label htmlFor="email">{setLanguage('EMAIL')}</label>
         <input
           type="text"
           name="email"
@@ -18,7 +20,7 @@ const SignInForm = () => {
         />
       </div>
       <div className="form__block">
-        <label htmlFor="password">비밀번호</label>
+        <label htmlFor="password">{setLanguage('PASSWORD')}</label>
         <input
           type="password"
           name="password"
@@ -30,13 +32,13 @@ const SignInForm = () => {
       </div>
       <div className="form__block error-msg">{error}</div>
       <div className="form__block">
-        계정이 없으신가요?
-        <Link to="/signup">회원가입하러 가기</Link>
+        {setLanguage('SIGNIN_TEXT')}
+        <Link to="/signup">{setLanguage('SIGNIN_TEXT_BTN')}</Link>
       </div>
 
       <div className="form__block">
         <button type="submit" className="form__btn-submit">
-          로그인
+          {setLanguage('SIGN_IN')}
         </button>
       </div>
       <div className="form__block" onClick={webLogin}>
