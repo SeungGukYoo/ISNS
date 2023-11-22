@@ -1,3 +1,4 @@
+export type LanguageType = 'ko' | 'en';
 export interface Props {
   children: React.ReactNode;
 }
